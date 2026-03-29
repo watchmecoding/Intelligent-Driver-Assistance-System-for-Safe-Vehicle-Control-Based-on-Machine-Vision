@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Інтелектуальна система асистування водію</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Інтелектуальна система асистування водію</h1>
+        <div class="header-right">
+            <button class="stats-btn" id="stats-btn">Статистика поїздок</button>
+            <div>
+                <span id="status-dot"></span>
+                <span id="status-text">Офлайн</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="video-panel">
+            <img id="video-stream" src="/video_feed" alt="Stream">
+            <div class="signals">
+                <span class="signal-badge" id="sig-left">◄ ЛІВИЙ</span>
+                <span class="signal-badge" id="sig-right">ПРАВИЙ ►</span>
+                <span class="signal-badge em" id="sig-em">⚠ АВАРІЙКА</span>
+                <span class="signal-badge br" id="sig-br">🔴 ГАЛЬМО</span>
+                <span class="signal-badge" id="sig-face">👁 ОБЛИЧЧЯ</span>
+            </div>
+        </div>
+
+        <div class="info-panel">
+
+            <div class="card">
+                <h2>Водій та транспортний засіб</h2>
+                <div class="info-grid">
+                    <div class="info-item"><label>Зареєстрований Водій</label><span id="d-name">—</span></div>
+                    <div class="info-item"><label>№ Посвідчення</label><span id="d-lic">—</span></div>
+                    <div class="info-item"><label>Автомобіль</label><span id="v-car">—</span></div>
+                    <div class="info-item"><label>Номер знак</label><span id="v-plate">—</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Статистика поточної поїздки</h2>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-val" id="s-yawns">0</div>
+                        <div class="stat-lbl">Позіхань</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="s-face">0</div>
+                        <div class="stat-lbl">Зникнень обличчя</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="s-em">0</div>
+                        <div class="stat-lbl">Аварійних зупинок</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Параметри налаштувань та поточні метрики</h2>
+                <table class="mt">
+                    <thead>
+                        <tr>
+                            <th>Параметр</th>
+                            <th>Налаштування</th>
+                            <th>Зараз</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mt-body"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Модальне вікно статистики -->
+    <div class="modal-overlay" id="stats-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Історія поїздок</h2>
+                <div style="display:flex;align-items:center">
+                    <button class="modal-refresh" id="stats-refresh">↻ Оновити</button>
+                    <button class="modal-close" id="stats-close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="smt">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Початок</th>
+                            <th>Завершено</th>
+                            <th>Тривалість</th>
+                            <th>Позіхань</th>
+                            <th>Аварійних зупинок</th>
+                            <th>Зникнень обличчя</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stats-tbody">
+                        <tr>
+                            <td colspan="7" class="no-data">Завантаження...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
