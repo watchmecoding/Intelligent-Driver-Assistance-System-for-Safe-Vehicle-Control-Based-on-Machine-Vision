@@ -139,10 +139,10 @@ function buildTable(s, m) {
 
         // Статус обмеження — правий стовпець
         let limitHtml;
-        if (m.yawns_depleted) {
-            limitHtml = mv('danger', '50% назавжди ∞');
-        } else if (m.yawn_speed_limit) {
-            limitHtml = mv('warn', 'Обмеження 50%');
+        if (m.emergency) {
+            limitHtml = mv('danger', 'Аварійна зупинка!');
+        } else if (currentMax > 0 && (currentMax - consY) <= 2 && consY > 0) {
+            limitHtml = mv('warn', `До зупинки: ${currentMax - consY}`);
         } else {
             limitHtml = mv('ok', 'Немає обмежень');
         }
@@ -163,7 +163,7 @@ function buildTable(s, m) {
     return h;
 }
 
-// ── Polling стану ────────────────────────────────────────────────
+// Polling стану
 let lastSeen = 0;
 
 function setVal(id, val, warnGt, dangerGt) {
@@ -225,6 +225,7 @@ async function poll() {
             yawn_speed_limit: d.yawn_speed_limit,
             yawns_depleted: d.yawns_depleted,
             current_max_yawns: d.current_max_yawns,
+            emergency: d.emergency
         });
 
     } catch (_) {

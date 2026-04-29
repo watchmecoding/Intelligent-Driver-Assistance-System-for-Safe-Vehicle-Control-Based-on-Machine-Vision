@@ -125,9 +125,9 @@ header h1 {
 }
 
 #sig-em.active {
-    background: #0044cc;
+    background: #ff4400;
     color: #fff;
-    border-color: #4488ff;
+    border-color: #ff4400;
     animation: blink-signal 0.667s step-end infinite;
 }
 

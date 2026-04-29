@@ -64,7 +64,8 @@ class IntelligentDriverAssistanceSystem:
 
         self.face_missing_start_time = None
         self._face_missing_counted   = False
-
+        self._yawn_emergency_counted = False
+        
         # Метрики для стріму
         self._last_ear              = 0.0
         self._last_mar              = 0.0
@@ -149,6 +150,7 @@ class IntelligentDriverAssistanceSystem:
             self._emergency_counted      = False
             self._emergency_count        = 0
             self._face_missing_count     = 0
+            self._yawn_emergency_counted = False
 
             self._last_ear             = 0.0
             self._last_mar             = 0.0
@@ -192,7 +194,7 @@ class IntelligentDriverAssistanceSystem:
             self.ui.start_button_text.set("Зупинити")
             self.ui.start_button.config(style="Stop.TButton")
             self.ui.status_label.config(
-                text="Система активна. Розведіть пальці для руху.",
+                text="Система активна",
                 fg=SUCCESS_COLOR)
             profile_id = 1 if self.settings.using_defaults else 2
             self.db.start_session(settings_profile_id=profile_id)
@@ -357,25 +359,44 @@ class IntelligentDriverAssistanceSystem:
                                 text="АВАРІЙНА ЗУПИНКА!", fg=DANGER_COLOR)
                             self._increment_emergency()
 
+                        elif drowsy_state == "drowsy":
+                            remaining = self.settings.stop_time - elapsed
+                            self.ui.warning_label.config(
+                                text=f"Очі закриті {elapsed:.1f}с\n"
+                                    f"Аварійна зупинка через {remaining:.1f}с",
+                                fg=WARNING_COLOR)
+
                         # Позіхання
                         yawn_result = self.vehicle.check_yawning(
                             mar, enable_yawns=self.settings.enable_yawns)
+                       
                         if yawn_result:
                             yawn_text = f"Позіхань: {self.vehicle.yawn_times}"
                             if self.settings.enable_yawns:
                                 yawn_text += f" (підряд: {self.vehicle.consecutive_yawns})"
                             self.ui.yawn_label.config(text=yawn_text)
 
-                            if self.vehicle.yawn_speed_limit or \
-                               self.vehicle.yawns_depleted:
-                                self._update_yawn_limit_label()
-                                self.ui.warning_label.config(
-                                    text=f"{self.vehicle.consecutive_yawns} позіхань підряд!\n"
-                                         "Швидкість обмежена до 50%.",
-                                    fg=WARNING_COLOR)
-                                self.ui.update_speed_display(
-                                    self.vehicle.manual_speed,
-                                    self.settings.max_speed_kmh)
+                            if (self.vehicle.emergency_stop_active and
+                                     not self._yawn_emergency_counted):
+                                self._yawn_emergency_counted = True
+                                self._increment_emergency()
+
+                        # if yawn_result:
+                        #     yawn_text = f"Позіхань: {self.vehicle.yawn_times}"
+                        #     if self.settings.enable_yawns:
+                        #         yawn_text += f" (підряд: {self.vehicle.consecutive_yawns})"
+                        #     self.ui.yawn_label.config(text=yawn_text)
+
+                        #     if self.vehicle.yawn_speed_limit or \
+                        #        self.vehicle.yawns_depleted:
+                        #         self._update_yawn_limit_label()
+                        #         self.ui.warning_label.config(
+                        #             text=f"{self.vehicle.consecutive_yawns} позіхань підряд!\n"
+                        #                  "Швидкість обмежена до 50%.",
+                        #             fg=WARNING_COLOR)
+                        #         self.ui.update_speed_display(
+                        #             self.vehicle.manual_speed,
+                        #             self.settings.max_speed_kmh)
 
                         # Нахил голови
                         tilt_state, tilt_elapsed, tilt_dir = \
@@ -415,9 +436,14 @@ class IntelligentDriverAssistanceSystem:
                         elif tilt_state == "tilt_warning":
                             remaining = self.settings.tilt_time - tilt_elapsed
                             self.ui.head_status_label.config(
-                                text=f"⚠ Нахил {tilt_dir} ({abs(pitch):.0f}°)"
-                                     f" — аварійка через {remaining:.1f}с",
+                                text=f"Нахил {tilt_dir} ({abs(pitch):.0f}°)"
+                                     f" — аварійна зупинка через {remaining:.1f}с",
                                 fg=WARNING_COLOR)
+                            self.ui.warning_label.config(
+                                text=f"Нахил голови {tilt_dir} ({abs(pitch):.0f}°)\n"
+                                    f"Аварійна зупинка через {remaining:.1f}с",
+                                fg=WARNING_COLOR)
+
                             self._head_down_logged = False
 
                         else:
@@ -457,6 +483,14 @@ class IntelligentDriverAssistanceSystem:
                                 self.ui.head_status_label.config(
                                     text="Напрямок: Прямо", fg=SUCCESS_COLOR)
 
+                            if self.settings.enable_yawns and not self.vehicle.emergency_stop_active and drowsy_state not in ("drowsy", "emergency"):
+                                remaining = self.settings.max_allowed_yawns - self.vehicle.consecutive_yawns
+                                if self.vehicle.consecutive_yawns > 0 and remaining <= 2:
+                                    self.ui.warning_label.config(
+                                        text=f"{self.vehicle.consecutive_yawns} позіхань підряд!\n"
+                                            f"До аварійної зупинки: {remaining}",
+                                        fg=WARNING_COLOR)
+
                         # Bbox + метрики на кадрі
                         bbox  = self.face_detector.draw_landmarks(
                             frame_rgb, lm.landmark, w, h)
@@ -474,9 +508,22 @@ class IntelligentDriverAssistanceSystem:
 
                     if not self.vehicle.emergency_stop_active and \
                        self.vehicle.eye_closed_start_time is None:
-                        self.ui.status_label.config(
-                            text="Система активна. Розведіть пальці для руху.",
-                            fg=SUCCESS_COLOR)
+                        
+                        remaining_yawns = self.settings.max_allowed_yawns - self.vehicle.consecutive_yawns
+                        
+                        if drowsy_state == "drowsy":
+                            pass
+                        elif tilt_state in ("tilt_warning", "tilt_emergency"):
+                            pass
+                        elif self.settings.enable_yawns and \
+                             self.vehicle.consecutive_yawns > 0 and \
+                             remaining_yawns <= 2:
+                            pass
+                        else:
+                            self.ui.warning_label.config(
+                                text="Немає попереджень", fg=SUCCESS_COLOR)
+                        
+                        self._update_yawn_limit_label()
 
                     self.frame_count += 1
 
@@ -502,6 +549,8 @@ class IntelligentDriverAssistanceSystem:
                                    fully_stopped and peace_cooldown_ok:
                                     self.vehicle.deactivate_emergency()
                                     self._emergency_counted = False
+                                    self._yawn_emergency_counted = False
+                                    self.ui.yawn_label.config(text=f"Позіхань: {self.vehicle.yawn_times} (підряд: 0)")
                                     self.ui.warning_label.config(
                                         text="Аварійку вимкнено жестом peace",
                                         fg=SUCCESS_COLOR)
@@ -582,15 +631,6 @@ class IntelligentDriverAssistanceSystem:
                                 if fully_stopped
                                 else f"Гальмування... ({int(self.vehicle.manual_speed)}%)",
                                 fg=WARNING_COLOR if fully_stopped else DANGER_COLOR)
-
-                    if not self.vehicle.emergency_stop_active and \
-                       self.vehicle.eye_closed_start_time is None:
-                        if not self.vehicle.yawn_speed_limit and \
-                           not self.vehicle.yawns_depleted:
-                            self.ui.warning_label.config(
-                                text="Немає попереджень", fg=SUCCESS_COLOR)
-                        if not self.vehicle.yawn_speed_limit:
-                            self._update_yawn_limit_label()
 
                 # Обличчя не знайдено
                 else:

@@ -23,10 +23,10 @@ PINCH_MAX  = 0.20
 
 # Регульована затримка після peace sign
 PEACE_COOLDOWN = 2.0
-
-# Arduino
-ARDUINO_PORT = "COM5"
-BAUD_RATE = 9600
+# Буфер
+SPEED_BUFFER_SIZE = 5
+# Ліміт позіхань
+MAX_ALLOWED_YAWNS = 5
 
 # UI кольори
 BG_COLOR = "#1a1a2e"
@@ -34,14 +34,12 @@ PANEL_BG = "#16213e"
 ACCENT_COLOR = "#0f3460"
 TEXT_COLOR = "#e8e8e8"
 SUCCESS_COLOR = "#06d6a0"
-WARNING_COLOR = "#ffd23f"
+WARNING_COLOR = "#f0ce23"
 DANGER_COLOR = "#ef476f"
 
-# Буфери
-SPEED_BUFFER_SIZE = 5
-
-# Ліміти
-MAX_ALLOWED_YAWNS = 5
+# Arduino
+ARDUINO_PORT = "COM5"
+BAUD_RATE = 9600
 
 # PostgreSQL
 DB_HOST     = "localhost"

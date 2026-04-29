@@ -163,32 +163,58 @@ class VehicleController:
         return "tilt_warning", elapsed, direction
 
     # Позіхання
+
     def check_yawning(self, MAR, enable_yawns=True):
-        if MAR > self.settings.mar_threshold:
+        s = self.settings
+        if MAR > s.mar_threshold:
             self.yawn_frame_count += 1
             if self.yawn_frame_count >= 3:
                 if not self.is_yawning:
                     self.yawn_times += 1
-                    self.is_yawning  = True
-
+                    self.is_yawning = True
                     if enable_yawns:
                         self.consecutive_yawns += 1
-                        if self.consecutive_yawns >= self.max_allowed_yawns \
-                        and not self.yawns_depleted:
-                            if not self.yawn_speed_limit:
-                                self.yawn_speed_limit = True
-                                if self.manual_speed > 50:
-                                    self.speed_buffer.clear()
-                                    for _ in range(SPEED_BUFFER_SIZE):
-                                        self.speed_buffer.append(50)
-                                    self.manual_speed = 50
-                                    self.arduino.send_speed(50)
-                            return "limited"
-                    return True
+                        if self.consecutive_yawns >= self.settings.max_allowed_yawns:
+                            # Аварійна зупинка замість обмеження
+                            if not self.emergency_stop_active:
+                                self.emergency_stop_active = True
+                                self.emergency_signal = True
+                                self.emergency_start_time = time.time()
+                                self.emergency_start_speed = self.manual_speed
+                                self.arduino.send_alarm(True)
+                            return True
+                return True
         else:
             self.yawn_frame_count = 0
-            self.is_yawning       = False
+            self.is_yawning = False
         return False
+
+    # def check_yawning(self, MAR, enable_yawns=True):
+    #     if MAR > self.settings.mar_threshold:
+    #         self.yawn_frame_count += 1
+    #         if self.yawn_frame_count >= 3:
+    #             if not self.is_yawning:
+    #                 self.yawn_times += 1
+    #                 self.is_yawning  = True
+
+    #                 if enable_yawns:
+    #                     self.consecutive_yawns += 1
+    #                     if self.consecutive_yawns >= self.max_allowed_yawns \
+    #                     and not self.yawns_depleted:
+    #                         if not self.yawn_speed_limit:
+    #                             self.yawn_speed_limit = True
+    #                             if self.manual_speed > 50:
+    #                                 self.speed_buffer.clear()
+    #                                 for _ in range(SPEED_BUFFER_SIZE):
+    #                                     self.speed_buffer.append(50)
+    #                                 self.manual_speed = 50
+    #                                 self.arduino.send_speed(50)
+    #                         return "limited"
+    #                 return True
+    #     else:
+    #         self.yawn_frame_count = 0
+    #         self.is_yawning       = False
+    #     return False
 
 
     # Швидкість
@@ -235,6 +261,7 @@ class VehicleController:
         self.arduino.send_alarm(False)
         self.speed_buffer.clear()
         self.last_peace_time = time.time()
+        self.consecutive_yawns = 0
 
     def can_control_speed(self):
         if self.emergency_stop_active:
@@ -243,31 +270,31 @@ class VehicleController:
             return False
         return True
 
-    def deactivate_yawn_limit(self):
-        if self.yawn_speed_limit:
-            self.yawn_speed_limit  = False
-            self.consecutive_yawns = 0
-            self.max_allowed_yawns -= 1
-            if self.max_allowed_yawns <= 0:
-                self.yawns_depleted    = True
-                self.max_allowed_yawns = 0
-            current = self.manual_speed
-            self.speed_buffer.clear()
-            for _ in range(SPEED_BUFFER_SIZE):
-                self.speed_buffer.append(current)
-            self.last_peace_time = time.time()
-            return True
-        return False
+    # def deactivate_yawn_limit(self):
+    #     if self.yawn_speed_limit:
+    #         self.yawn_speed_limit  = False
+    #         self.consecutive_yawns = 0
+    #         self.max_allowed_yawns -= 1
+    #         if self.max_allowed_yawns <= 0:
+    #             self.yawns_depleted    = True
+    #             self.max_allowed_yawns = 0
+    #         current = self.manual_speed
+    #         self.speed_buffer.clear()
+    #         for _ in range(SPEED_BUFFER_SIZE):
+    #             self.speed_buffer.append(current)
+    #         self.last_peace_time = time.time()
+    #         return True
+    #     return False
 
-    def reset_yawn_limit(self):
-        if self.yawns_depleted:
-            return
-        self.yawn_speed_limit  = False
-        self.consecutive_yawns = 0
-        self.max_allowed_yawns = max(0, self.max_allowed_yawns - 1)
-        if self.max_allowed_yawns <= 0:
-            self.yawns_depleted = True
-        self.speed_buffer.clear()
+    # def reset_yawn_limit(self):
+    #     if self.yawns_depleted:
+    #         return
+    #     self.yawn_speed_limit  = False
+    #     self.consecutive_yawns = 0
+    #     self.max_allowed_yawns = max(0, self.max_allowed_yawns - 1)
+    #     if self.max_allowed_yawns <= 0:
+    #         self.yawns_depleted = True
+    #     self.speed_buffer.clear()
 
     def reset_all_yawn_counters(self):
         self.yawn_times        = 0

@@ -293,19 +293,19 @@ class UIManager:
             fg=WARNING_COLOR if right else "#444444")
 
         self.emergency_label.config(
-            fg="#4488ff" if emergency else "#444444")
+            fg=WARNING_COLOR if emergency else "#444444")
 
         self.brake_label.config(
             fg=DANGER_COLOR if brake else "#444444")
 
     def update_signals_emergency(self, blink_state, brake):
         orange = WARNING_COLOR
-        blue   = "#4488ff"
+        emrg   = DANGER_COLOR
         dim    = "#444444"
 
         self.left_turn_label.config(fg=orange if blink_state else dim)
         self.right_turn_label.config(fg=orange if blink_state else dim)
 
-        self.emergency_label.config(fg=blue if blink_state else dim)
+        self.emergency_label.config(fg=emrg if blink_state else dim)
 
         self.brake_label.config(fg=DANGER_COLOR if brake else dim)

@@ -134,7 +134,7 @@ class SettingsWindow:
                      "Увімкнути контроль позіхань", s.enable_yawns)
         self._slider("max_allowed_yawns",
                      "Ліміт позіхань підряд",
-                     1, 10, s.max_allowed_yawns,
+                     3, 10, s.max_allowed_yawns,
                      resolution=1, is_int=True)
         self._slider("mar_threshold",
              "MAR поріг позіхання (0.3 – 0.9)",
