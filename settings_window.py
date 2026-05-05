@@ -78,29 +78,29 @@ class SettingsWindow:
     def _build_body(self):
         s = self.settings
 
-        self._section("Загальні")
+        self._section("Загальні параметри")
         self._slider("max_speed_kmh",
                      "Максимальна швидкість ТЗ (км/год)",
                      30, 250, s.max_speed_kmh,
                      resolution=5, is_int=True)
+        self._slider("emergency_brake_dur",
+                     "Тривалість аварійного гальмування (сек)",
+                     1.0, 10.0, s.emergency_brake_dur, resolution=0.5)
+        self._slider("peace_cooldown",
+                     "Час затримки після відміни аварійки (сек)",
+                     0.5, 10.0, s.peace_cooldown, resolution=0.5)
 
-        self._section("Контроль сонливості")
+        self._section("Контроль очей")
         self._toggle("enable_drowsiness",
-                     "Увімкнути контроль сонливості", s.enable_drowsiness)
+                     "Увімкнути контроль очей", s.enable_drowsiness)
         self._slider("ear_threshold",
                      "EAR поріг закритих очей (0.10 – 0.40)",
                      0.10, 0.40, s.ear_threshold, resolution=0.01)
         self._slider("stop_time",
                      "Час закритих очей до аварійки (сек)",
                      1.0, 10.0, s.stop_time, resolution=0.5)
-        self._slider("emergency_brake_dur",
-                     "Тривалість плавного гальмування (сек)",
-                     1.0, 10.0, s.emergency_brake_dur, resolution=0.5)
-        self._slider("peace_cooldown",
-                     "Час відновлення після аварійки (сек)",
-                     0.5, 10.0, s.peace_cooldown, resolution=0.5)
 
-        self._section("Нахил голови")
+        self._section("Контроль нахилу голови")
         self._toggle("enable_tilt",
                      "Увімкнути контроль нахилу голови", s.enable_tilt)
         self._slider("pitch_down_threshold",
@@ -110,10 +110,10 @@ class SettingsWindow:
                      "Поріг нахилу ВГОРУ (°)",
                      0, 100, s.pitch_up_threshold)
         self._slider("tilt_time",
-                     "Затримка до аварійки при нахилі (сек)",
+                     "Час нахилу голови до аварійки (сек)",
                      0.5, 10.0, s.tilt_time, resolution=0.5)
 
-        self._section("Поворот голови / Поворотники")
+        self._section("Контроль повороту голови (поворотники)")
         self._toggle("enable_turn_signals",
                      "Увімкнути автоматичні поворотники", s.enable_turn_signals)
         self._slider("head_turn_angle_left",
@@ -129,12 +129,12 @@ class SettingsWindow:
                      "Час прямо для ВИМИКАННЯ (сек)",
                      0.5, 5.0, s.head_turn_off_time, resolution=0.5)
 
-        self._section("Позіхання")
+        self._section("Контроль позіхань")
         self._toggle("enable_yawns",
                      "Увімкнути контроль позіхань", s.enable_yawns)
         self._slider("max_allowed_yawns",
                      "Ліміт позіхань підряд",
-                     3, 10, s.max_allowed_yawns,
+                     3, 15, s.max_allowed_yawns,
                      resolution=1, is_int=True)
         self._slider("mar_threshold",
              "MAR поріг позіхання (0.3 – 0.9)",

@@ -47,6 +47,10 @@ header h1 {
     background: #00c853;
 }
 
+#status-dot.stopped {
+    background: #f59e0b;
+}
+
 .stats-btn {
     background: #2a2a4e;
     border: 1px solid #3d3d7a;

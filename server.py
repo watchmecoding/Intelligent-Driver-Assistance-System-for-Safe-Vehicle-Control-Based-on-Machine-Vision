@@ -68,6 +68,12 @@ def get_state():
     with _lock:
         return jsonify(_state)
 
+@app.after_request
+def no_cache(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/push_sessions', methods=['POST'])
 def push_sessions():
@@ -77,17 +83,20 @@ def push_sessions():
         _sessions = data or []
     return 'OK', 200
 
-
 @app.route('/sessions')
 def get_sessions():
     with _lock:
         return jsonify(_sessions)
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 def push_frame_direct(frame_bgr, state_dict):
     global _frame, _state
     with _lock:
-        _frame = frame_bgr.copy()
+        if frame_bgr is not None:
+            _frame = frame_bgr.copy()
         _state = state_dict
 
 

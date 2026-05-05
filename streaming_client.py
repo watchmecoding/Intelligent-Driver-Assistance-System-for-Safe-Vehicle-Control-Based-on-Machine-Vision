@@ -4,6 +4,7 @@ import json
 import queue
 import threading
 import requests
+import server as _server
 
 class StreamingClient:
     def __init__(self, server_url):
@@ -11,6 +12,13 @@ class StreamingClient:
         self.connected = False
         self._queue    = queue.Queue(maxsize=1)
         self._session  = requests.Session()
+
+        threading.Thread(
+            target=_server.run_server,
+            kwargs={'host': '0.0.0.0', 'port': 5000},
+            daemon=True,
+        ).start()
+
         threading.Thread(target=self._worker, daemon=True).start()
         self._ping()
 
@@ -35,27 +43,16 @@ class StreamingClient:
                 pass
 
     def push_sessions(self, sessions: list):
-        def _do():
-            try:
-                self._session.post(
-                    f"{self.url}/push_sessions",
-                    json=sessions,
-                    timeout=2.0)
-            except Exception:
-                pass
-        threading.Thread(target=_do, daemon=True).start()
+        try:
+            _server.push_sessions_direct(sessions)
+        except Exception:
+            pass
 
     def _worker(self):
         while True:
             try:
                 frame, state = self._queue.get(timeout=1.0)
-                _, jpeg = cv2.imencode(
-                    '.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
-                self._session.post(
-                    f"{self.url}/update",
-                    files={'frame': ('f.jpg', jpeg.tobytes(), 'image/jpeg')},
-                    data={'state': json.dumps(state, default=str)},
-                    timeout=0.5)
+                _server.push_frame_direct(frame, state)
                 self.connected = True
             except queue.Empty:
                 continue

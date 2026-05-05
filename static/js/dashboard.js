@@ -184,8 +184,13 @@ async function poll() {
         const d = await r.json();
         lastSeen = Date.now();
 
-        document.getElementById('status-dot').className = 'online';
-        document.getElementById('status-text').textContent = 'Онлайн';
+        if (d.is_live) {
+            document.getElementById('status-dot').className = 'online';
+            document.getElementById('status-text').textContent = 'Онлайн';
+        } else {
+            document.getElementById('status-dot').className = 'stopped';
+            document.getElementById('status-text').textContent = 'Зупинено';
+        }
 
         // Водій / ТЗ
         const dr = d.driver || {};
