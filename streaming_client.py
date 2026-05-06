@@ -44,7 +44,10 @@ class StreamingClient:
 
     def push_sessions(self, sessions: list):
         try:
-            _server.push_sessions_direct(sessions)
+            self._session.post(
+                f"{self.url}/push_sessions",
+                json=sessions,
+                timeout=1.0)
         except Exception:
             pass
 

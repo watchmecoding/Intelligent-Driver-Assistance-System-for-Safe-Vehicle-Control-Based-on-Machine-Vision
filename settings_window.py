@@ -139,6 +139,12 @@ class SettingsWindow:
         self._slider("mar_threshold",
              "MAR поріг позіхання (0.3 – 0.9)",
              0.30, 0.90, s.mar_threshold, resolution=0.01)
+        self._section("Контроль зникнення обличчя")
+        self._toggle("enable_face_missing",
+                    "Увімкнути контроль зникнення обличчя", s.enable_face_missing)
+        self._slider("face_missing_time",
+                    "Час відсутності обличчя до аварійки (сек)",
+                    1.0, 10.0, s.face_missing_time, resolution=0.5)
 
     def _section(self, title):
         tk.Frame(self.body, bg="#2a2a4e", height=2).pack(
@@ -207,13 +213,15 @@ class SettingsWindow:
             'head_turn_time':        s.head_turn_time,
             'head_turn_off_time':    s.head_turn_off_time,
             'max_allowed_yawns':     s.max_allowed_yawns,
-            'mar_threshold':  s.mar_threshold,
+            'mar_threshold':         s.mar_threshold,
+            'face_missing_time':     s.face_missing_time,
         }
         toggles = {
             'enable_drowsiness':   s.enable_drowsiness,
             'enable_tilt':         s.enable_tilt,
             'enable_turn_signals': s.enable_turn_signals,
             'enable_yawns':        s.enable_yawns,
+            'enable_face_missing': s.enable_face_missing,
         }
         for key, val in mapping.items():
             item = self._vars.get(key)

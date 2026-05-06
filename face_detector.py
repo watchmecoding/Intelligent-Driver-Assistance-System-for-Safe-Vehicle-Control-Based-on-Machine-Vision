@@ -93,36 +93,6 @@ class FaceDetector:
         except Exception:
             return self._prev_pitch
 
-    # def estimate_head_pose(self, landmarks, w, h):
-    #     try:
-    #         img_pts = np.array(
-    #             [[landmarks[i].x * w, landmarks[i].y * h] for i in _MODEL_LM],
-    #             dtype=np.float64
-    #         )
-    #         focal = float(w)
-    #         cam = np.array([[focal, 0, w/2], [0, focal, h/2], [0, 0, 1]], dtype=np.float64)
-    #         dist = np.zeros((4,1), dtype=np.float64)
-    #         ok, rvec, _ = cv2.solvePnP(_MODEL_3D, img_pts, cam, dist,
-    #                                     flags=cv2.SOLVEPNP_ITERATIVE)
-    #         if not ok:
-    #             return self.prev_pitch, 0.0
-    #         R, _ = cv2.Rodrigues(rvec)
-            
-    #         ALPHA = 0.4 # Згладжування
-
-    #         pitch = -float(np.degrees(np.arctan2(R[2,1], R[2,2])))
-    #         yaw   =  float(np.degrees(np.arctan2(-R[2,0], np.sqrt(R[2,1]**2 + R[2,2]**2))))
-    #         pitch = np.clip(pitch, -50, 50)
-    #         yaw   = np.clip(yaw,   -60, 60)
-    #         pitch = ALPHA * pitch + (1 - ALPHA) * self.prev_pitch
-    #         yaw   = ALPHA * yaw   + (1 - ALPHA) * self.prev_yaw
-
-    #         self._prev_pitch = pitch
-    #         self._prev_yaw   = yaw
-    #         return pitch, yaw
-    #     except Exception:
-    #         return self._prev_pitch, self._prev_yaw
-
     def get_metrics(self, landmarks, w, h):
         s = self.settings
 
@@ -130,7 +100,6 @@ class FaceDetector:
         right_ear = self.calculate_EAR(landmarks, RIGHT_EYE_IDX, w, h)
         yaw       = self.estimate_head_yaw(landmarks, w, h)
         pitch     = self.estimate_head_pitch(landmarks, w, h)
-        # pitch, yaw = self.estimate_head_pose(landmarks, w, h)
         
         # Вибір найближчого ока при повороті
         angle_left  = s.head_turn_angle_left
@@ -142,16 +111,6 @@ class FaceDetector:
             ear = left_ear
         else:
             ear = (left_ear + right_ear) / 2.0
-
-        # Корекція EAR при повороті
-        # if yaw < -angle_left:
-        #     extra      = abs(yaw) - angle_left
-        #     correction = max(0.80, 1.0 - extra * 0.004)
-        #     ear       *= correction
-        # elif yaw > angle_right:
-        #     extra      = yaw - angle_right
-        #     correction = max(0.80, 1.0 - extra * 0.004)
-        #     ear       *= correction
 
         mar = self.calculate_MAR(landmarks, self.mouth_indices, w, h)
 

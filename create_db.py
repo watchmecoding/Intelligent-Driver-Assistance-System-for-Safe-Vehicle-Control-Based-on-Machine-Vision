@@ -135,6 +135,16 @@ CREATE TABLE IF NOT EXISTS settings_yawns (
 )
 """)
 
+cur.execute("""
+CREATE TABLE IF NOT EXISTS settings_face_missing (
+    profile_id          INTEGER PRIMARY KEY REFERENCES settings_profiles(id),
+    face_missing_time   FLOAT   NOT NULL DEFAULT 3.0,
+    enable_face_missing BOOLEAN NOT NULL DEFAULT TRUE,
+    description         TEXT    DEFAULT 'Час відсутності обличчя до аварійки.',
+    updated_at          TIMESTAMP DEFAULT NOW()
+)
+""")
+
 # Тестові дані: Водій
 cur.execute("""
 INSERT INTO drivers (first_name, last_name, license_number, birth_date, phone)
@@ -168,7 +178,7 @@ ON CONFLICT (id) DO NOTHING
 # Початкові рядки для обох профілів
 for profile_id in (1, 2):
     for table in ("settings_general", "settings_drowsiness",
-                  "settings_head_tilt", "settings_turn_signals", "settings_yawns"):
+                  "settings_head_tilt", "settings_turn_signals", "settings_yawns", "settings_face_missing"):
         cur.execute(f"""
             INSERT INTO {table} (profile_id) VALUES (%s)
             ON CONFLICT (profile_id) DO NOTHING
@@ -185,12 +195,14 @@ for view_name, profile_id in [("v_settings", 2), ("v_default_settings", 1)]:
            t.tilt_time, t.enable_tilt,
            s.head_turn_angle_left, s.head_turn_angle_right,
            s.head_turn_time, s.head_turn_off_time, s.enable_turn_signals,
-           y.max_allowed_yawns, y.enable_yawns
+           y.max_allowed_yawns, y.enable_yawns,
+           f.face_missing_time, f.enable_face_missing
     FROM   settings_general      g
     JOIN   settings_drowsiness   d ON d.profile_id = g.profile_id
     JOIN   settings_head_tilt    t ON t.profile_id = g.profile_id
     JOIN   settings_turn_signals s ON s.profile_id = g.profile_id
     JOIN   settings_yawns        y ON y.profile_id = g.profile_id
+    JOIN   settings_face_missing f ON f.profile_id = g.profile_id
     WHERE  g.profile_id = {profile_id}
     """)
 

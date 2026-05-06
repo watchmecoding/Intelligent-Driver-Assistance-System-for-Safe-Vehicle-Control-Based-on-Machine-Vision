@@ -178,6 +178,16 @@ class DatabaseLogger:
                         updated_at        = NOW()
                 """, (s.max_allowed_yawns, s.enable_yawns))
 
+                cur.execute("""
+                    INSERT INTO settings_face_missing
+                        (profile_id, face_missing_time, enable_face_missing, updated_at)
+                    VALUES (2, %s, %s, NOW())
+                    ON CONFLICT (profile_id) DO UPDATE SET
+                        face_missing_time   = EXCLUDED.face_missing_time,
+                        enable_face_missing = EXCLUDED.enable_face_missing,
+                        updated_at          = NOW()
+                """, (s.face_missing_time, s.enable_face_missing))
+
             conn.commit()
             print("Налаштування збережено")
         except Exception as e:
@@ -215,6 +225,9 @@ class DatabaseLogger:
                     ("settings_yawns",
                      "max_allowed_yawns=d.max_allowed_yawns, "
                      "enable_yawns=d.enable_yawns"),
+                    ("settings_face_missing",
+                     "face_missing_time=d.face_missing_time, "
+                     "enable_face_missing=d.enable_face_missing"),
                 ]:
                     cur.execute(f"""
                         UPDATE {table} u

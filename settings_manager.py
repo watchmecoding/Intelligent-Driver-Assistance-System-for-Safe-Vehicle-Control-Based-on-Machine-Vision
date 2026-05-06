@@ -40,6 +40,9 @@ class SettingsManager:
         # Позіхання
         self.max_allowed_yawns    = 5
         self.enable_yawns         = True
+        # Зникнення обличчя
+        self.face_missing_time    = 3.0
+        self.enable_face_missing  = True
 
     def _apply_dict(self, data):
         float_fields = [
@@ -47,12 +50,12 @@ class SettingsManager:
             'stop_time', 'emergency_brake_dur', 'peace_cooldown',
             'pitch_down_threshold', 'pitch_up_threshold', 'tilt_time',
             'head_turn_angle_left', 'head_turn_angle_right',
-            'head_turn_time', 'head_turn_off_time',
+            'head_turn_time', 'head_turn_off_time','face_missing_time',
         ]
         int_fields  = ['max_allowed_yawns', 'max_speed_kmh']
         bool_fields = [
             'enable_drowsiness', 'enable_tilt',
-            'enable_turn_signals', 'enable_yawns',
+            'enable_turn_signals', 'enable_yawns', 'enable_face_missing',
         ]
         for f in float_fields:
             if data.get(f) is not None:

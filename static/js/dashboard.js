@@ -42,19 +42,31 @@ function buildTable(s, m) {
     if (!s) return '';
     let h = '';
 
-    // ── Загальні ──
-    h += sec('Загальні');
+    // Загальні
+    h += sec('Загальні параметри');
     const spKmh = m.speed != null ? Math.round(m.speed / 100 * s.max_speed_kmh) : null;
     const spPct = spKmh != null ? spKmh / s.max_speed_kmh : 0;
     h += row('Макс. швидкість', s.max_speed_kmh + ' км/год',
         mv(spPct < 0.5 ? 'ok' : spPct < 0.8 ? 'warn' : 'danger',
             spKmh != null ? spKmh + ' км/год' : '—'));
+    
+    const brakeT = m.brake_countdown != null ? m.brake_countdown : null;
+    const brakeHtml = brakeT != null && brakeT > 0
+        ? mv('danger', f1(brakeT) + 'с')
+        : mv('ok', '—');        
+    h += row('Тривалість гальмування', s.emergency_brake_dur != null ? s.emergency_brake_dur + 'с' : '—', brakeHtml);
 
-    // ── Сонливість ──
+    const cdT = m.peace_countdown != null ? m.peace_countdown : null;
+    const cdHtml = cdT != null && cdT > 0
+        ? mv('warn', f1(cdT) + 'с')
+        : mv('ok', '—');
+    h += row('Cooldown після аварійки', s.peace_cooldown != null ? s.peace_cooldown + 'с' : '—', cdHtml);
+    
+    // Контроль очей
     if (!s.enable_drowsiness) {
-        h += secOff('Сонливість');
+        h += secOff('Контроль очей');
     } else {
-        h += sec('Сонливість');
+        h += sec('Контроль очей');
         const earC = m.ear != null
             ? (m.ear > s.ear_threshold * 1.2 ? 'ok'
                 : m.ear > s.ear_threshold ? 'warn' : 'danger') : 'na';
@@ -62,15 +74,46 @@ function buildTable(s, m) {
 
         const eyeT = m.eye_closed_time || 0;
         const eyeC = eyeT <= 0 ? 'ok' : eyeT < s.stop_time ? 'warn' : 'danger';
-        h += row('Час закритих очей', s.stop_time + 'с', mv(eyeC, f1(eyeT) + 'с'));
-        h += row('Тривалість гальмування', s.emergency_brake_dur + 'с', mv('na', '—'));
+        h += row('Час закритих очей', s.stop_time + 'с', mv(eyeC, eyeT > 0 ? f1(eyeT) + 'с' : '—'));
     }
 
-    // ── Поворотники ──
-    if (!s.enable_turn_signals) {
-        h += secOff('Поворотники');
+    // Нахил голови
+    if (!s.enable_tilt) {
+        h += secOff('Контроль нахилу голови');
     } else {
-        h += sec('Поворотники');
+        h += sec('Контроль нахилу голови');
+
+        // Вниз — pitch < 0
+        if (m.pitch != null && m.pitch < 0) {
+            const absP = Math.abs(m.pitch);
+            const pDc = absP < s.pitch_down_threshold * 0.5 ? 'ok'
+                : absP < s.pitch_down_threshold ? 'warn' : 'danger';
+            h += row('Поріг нахилу вниз', f0(s.pitch_down_threshold) + '°',
+                mv(pDc, f0(absP) + '°'));
+        } else {
+            h += row('Поріг нахилу вниз', f0(s.pitch_down_threshold) + '°', mv('ok', '—'));
+        }
+
+        // Вгору — pitch > 0
+        if (m.pitch != null && m.pitch > 0) {
+            const pUc = m.pitch < s.pitch_up_threshold * 0.5 ? 'ok'
+                : m.pitch < s.pitch_up_threshold ? 'warn' : 'danger';
+            h += row('Поріг нахилу вгору', f0(s.pitch_up_threshold) + '°',
+                mv(pUc, f0(m.pitch) + '°'));
+        } else {
+            h += row('Поріг нахилу вгору', f0(s.pitch_up_threshold) + '°', mv('ok', '—'));
+        }
+
+        const tiltT = m.tilt_time || 0;
+        const tiltC = tiltT <= 0 ? 'ok' : tiltT < s.tilt_time ? 'warn' : 'danger';
+        h += row('Час нахилу', s.tilt_time + 'с', mv(tiltC, tiltT > 0 ? f1(tiltT) + 'с' : '—'));
+    }
+
+    // Поворотники
+    if (!s.enable_turn_signals) {
+        h += secOff('Контроль повороту голови (поворотники)');
+    } else {
+        h += sec('Контроль повороту голови (поворотники)');
 
         // Лівий — yaw < 0
         if (m.yaw != null && m.yaw < 0) {
@@ -79,7 +122,7 @@ function buildTable(s, m) {
             h += row('Кут повороту вліво', f0(s.head_turn_angle_left) + '°',
                 mv(yLc, f0(m.yaw) + '°'));
         } else {
-            h += row('Кут повороту вліво', f0(s.head_turn_angle_left) + '°', mv('na', '—'));
+            h += row('Кут повороту вліво', f0(s.head_turn_angle_left) + '°', mv('ok', '—'));
         }
 
         // Правий — yaw > 0
@@ -90,47 +133,25 @@ function buildTable(s, m) {
             h += row('Кут повороту вправо', f0(s.head_turn_angle_right) + '°',
                 mv(yRc, f0(absYaw) + '°'));
         } else {
-            h += row('Кут повороту вправо', f0(s.head_turn_angle_right) + '°', mv('na', '—'));
+            h += row('Кут повороту вправо', f0(s.head_turn_angle_right) + '°', mv('ok', '—'));
         }
+
+        const turnT = m.turn_signal_time != null ? m.turn_signal_time : null;
+        const turnThr = s.turn_signal_delay || 0;
+        const turnC = turnT == null || turnT <= 0 ? 'ok' : turnT < turnThr ? 'warn' : 'danger';
+        h += row('Час повороту до сигналу', f1(turnThr) + 'с', mv(turnC, turnT != null && turnT > 0 ? f1(turnT) + 'с' : '—'));
+
+        const fwdT = m.forward_gaze_time != null ? m.forward_gaze_time : null;
+        const fwdThr = s.forward_gaze_cancel || 0;
+        const fwdC = fwdT == null || fwdT <= 0 ? 'ok' : fwdT < fwdThr ? 'warn' : 'danger';
+        h += row('Час погляду прямо (скасування)', f1(fwdThr) + 'с', mv(fwdC, fwdT != null && fwdT > 0 ? f1(fwdT) + 'с' : '—'));
     }
 
-    // ── Нахил голови ──
-    if (!s.enable_tilt) {
-        h += secOff('Нахил голови');
-    } else {
-        h += sec('Нахил голови');
-
-        // Вниз — pitch < 0
-        if (m.pitch != null && m.pitch < 0) {
-            const absP = Math.abs(m.pitch);
-            const pDc = absP < s.pitch_down_threshold * 0.5 ? 'ok'
-                : absP < s.pitch_down_threshold ? 'warn' : 'danger';
-            h += row('Поріг нахилу вниз', f0(s.pitch_down_threshold) + '°',
-                mv(pDc, f0(absP) + '°'));
-        } else {
-            h += row('Поріг нахилу вниз', f0(s.pitch_down_threshold) + '°', mv('na', '—'));
-        }
-
-        // Вгору — pitch > 0
-        if (m.pitch != null && m.pitch > 0) {
-            const pUc = m.pitch < s.pitch_up_threshold * 0.5 ? 'ok'
-                : m.pitch < s.pitch_up_threshold ? 'warn' : 'danger';
-            h += row('Поріг нахилу вгору', f0(s.pitch_up_threshold) + '°',
-                mv(pUc, f0(m.pitch) + '°'));
-        } else {
-            h += row('Поріг нахилу вгору', f0(s.pitch_up_threshold) + '°', mv('na', '—'));
-        }
-
-        const tiltT = m.tilt_time || 0;
-        const tiltC = tiltT <= 0 ? 'ok' : tiltT < s.tilt_time ? 'warn' : 'danger';
-        h += row('Час нахилу', s.tilt_time + 'с', mv(tiltC, f1(tiltT) + 'с'));
-    }
-
-    // ── Позіхання ──
+    // Позіхання
     if (!s.enable_yawns) {
-        h += secOff('Позіхання');
+        h += secOff('Контроль позіхань');
     } else {
-        h += sec('Позіхання');
+        h += sec('Контроль позіхань');
 
         const consY = m.consecutive_yawns || 0;
         const currentMax = m.current_max_yawns || 0;
@@ -139,12 +160,12 @@ function buildTable(s, m) {
 
         // Статус обмеження — правий стовпець
         let limitHtml;
-        if (m.emergency) {
+        if (m.yawn_emergency) {
             limitHtml = mv('danger', 'Аварійна зупинка!');
         } else if (currentMax > 0 && (currentMax - consY) <= 2 && consY > 0) {
             limitHtml = mv('warn', `До зупинки: ${currentMax - consY}`);
         } else {
-            limitHtml = mv('ok', 'Немає обмежень');
+            limitHtml = mv('ok', '—');
         }
 
         h += row(
@@ -156,10 +177,20 @@ function buildTable(s, m) {
         // MAR
         const marC = m.mar != null
             ? (m.mar < s.mar_threshold * 0.6 ? 'ok'
-                : m.mar < s.mar_threshold ? 'warn' : 'danger') : 'na';
-        h += row('MAR поріг', f2(s.mar_threshold), mv(marC, f2(m.mar)));
+                : m.mar < s.mar_threshold ? 'warn' : 'danger') : 'ok';
+        h += row('MAR поріг', f2(s.mar_threshold), mv(marC, m.mar != null && m.mar > 0 ? f2(m.mar) : '—'));
     }
-
+    if (!s.enable_face_missing) {
+        h += secOff('Зникнення обличчя');
+    } else {
+        h += sec('Зникнення обличчя');
+        const faceT = m.face_missing_time != null ? m.face_missing_time : null;
+        const faceThr = s.face_missing_threshold || 0;
+        const faceC = faceT == null || faceT <= 0 ? 'ok' : faceT < faceThr ? 'warn' : 'danger';
+        h += row('Час відсутності обличчя', faceThr + 'с',
+            mv(faceC, faceT != null && faceT > 0 ? f1(faceT) + 'с' : '—'));
+    }
+    
     return h;
 }
 
@@ -227,10 +258,16 @@ async function poll() {
             eye_closed_time: d.eye_closed_time,
             tilt_time: d.tilt_time,
             consecutive_yawns: d.consecutive_yawns,
-            yawn_speed_limit: d.yawn_speed_limit,
-            yawns_depleted: d.yawns_depleted,
             current_max_yawns: d.current_max_yawns,
-            emergency: d.emergency
+            emergency: d.emergency,
+            yawn_emergency: d.yawn_emergency,
+            brake_countdown: d.brake_countdown,
+            emergency_cooldown: d.emergency_cooldown,
+            peace_countdown: d.peace_countdown,
+            peace_cooldown: d.peace_cooldown,
+            turn_signal_time: d.turn_signal_time,
+            forward_gaze_time: d.forward_gaze_time,
+            face_missing_time: d.face_missing_time
         });
 
     } catch (_) {
@@ -241,10 +278,10 @@ async function poll() {
     }
 }
 
-setInterval(poll, 300);
+setInterval(poll, 100);
 poll();
 
-// ── Статистика поїздок ───────────────────────────────────────────
+// Статистика поїздок
 async function loadStats() {
     document.getElementById('stats-tbody').innerHTML =
         '<tr><td colspan="7" class="no-data">Завантаження...</td></tr>';

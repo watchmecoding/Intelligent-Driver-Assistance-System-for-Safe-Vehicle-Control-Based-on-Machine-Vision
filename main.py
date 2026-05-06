@@ -25,11 +25,11 @@ class IntelligentDriverAssistanceSystem:
 
         self.log_file = open("events_log.txt", "a", encoding="utf-8")
 
+        self.db            = DatabaseLogger()
         self.face_detector = FaceDetector()
         self.hand_detector = HandDetector()
         self.arduino       = ArduinoController(log_callback=self.log_event)
         self.vehicle       = VehicleController(self.arduino)
-        self.db            = DatabaseLogger()
 
         self.settings = SettingsManager()
         self.settings.load_from_db(self.db)
@@ -67,6 +67,9 @@ class IntelligentDriverAssistanceSystem:
         self._last_pitch            = 0.0
         self._last_eye_closed_time  = 0.0
         self._last_tilt_time        = 0.0
+        self.last_turn_signal_time  = 0.0
+        self.last_forward_gaze_time = 0.0
+        self.last_brake_countdown   = 0.0
         self._last_face_detected    = False
         self._head_down_logged      = False
 
@@ -214,14 +217,17 @@ class IntelligentDriverAssistanceSystem:
                 'ear': 0.0, 'mar': 0.0, 'yaw': 0.0, 'pitch': 0.0,
                 'eye_closed_time': 0.0, 'tilt_time': 0.0,
                 'speed': 0, 'consecutive_yawns': 0,
+                'brake_countdown':    0.0,
+                'face_missing_time': 0.0,
                 'emergency': False,
                 'left_signal': False, 'right_signal': False,
-                'brake_active': False, 'face_detected': False,
-                'yawns': 0, 'yawns_depleted': False,
-                'yawn_speed_limit': False, 'current_max_yawns': self.settings.max_allowed_yawns,
+                'brake_active': False,'face_detected': False,
+                'yawns': 0,
+                'current_max_yawns': self.settings.max_allowed_yawns,
                 'emergency_count': 0, 'face_missing_count': 0,
                 'driver': self._driver_info,
                 'vehicle': self._vehicle_info,
+                'emergency_cooldown': self.vehicle.emergency_cooldown_remaining,
                 'settings': {
                     'max_speed_kmh':         self.settings.max_speed_kmh,
                     'ear_threshold':         self.settings.ear_threshold,
@@ -238,6 +244,8 @@ class IntelligentDriverAssistanceSystem:
                     'enable_tilt':           self.settings.enable_tilt,
                     'enable_turn_signals':   self.settings.enable_turn_signals,
                     'enable_yawns':          self.settings.enable_yawns,
+                    'face_missing_threshold': self.settings.face_missing_time,
+                    'enable_face_missing':    self.settings.enable_face_missing,
                 },
             }
             self.streamer.send_update(
@@ -299,6 +307,11 @@ class IntelligentDriverAssistanceSystem:
                     'pitch':             round(self._last_pitch, 1),
                     'eye_closed_time':   round(self._last_eye_closed_time, 1),
                     'tilt_time':         round(self._last_tilt_time,       1),
+                    'brake_countdown':   round(self.last_brake_countdown, 1),
+                    'peace_countdown':   round(max(0.0, self.settings.peace_cooldown - (time.time() - self.vehicle.last_peace_time)), 1),
+                    'face_missing_time': round(time.time() - self.face_missing_start_time, 1) if self.face_missing_start_time and not self._last_face_detected else 0.0,
+                    'turn_signal_time':  round(self.last_turn_signal_time, 1),
+                    'forward_gaze_time': round(self.last_forward_gaze_time, 1),
                     'speed':             int(self.vehicle.manual_speed),
                     'consecutive_yawns': self.vehicle.consecutive_yawns,
                     'emergency':         self.vehicle.emergency_stop_active,
@@ -310,8 +323,7 @@ class IntelligentDriverAssistanceSystem:
                                          or self.vehicle.emergency_stop_active,
                     'face_detected':     self._last_face_detected,
                     'yawns':             self.vehicle.yawn_times,
-                    'yawns_depleted':    self.vehicle.yawns_depleted,
-                    'yawn_speed_limit':  self.vehicle.yawn_speed_limit,
+                    'yawn_emergency':    self.vehicle.emergency_stop_active and self._yawn_emergency_counted,
                     'current_max_yawns': self.vehicle.max_allowed_yawns,
                     'emergency_count':   self._emergency_count,
                     'face_missing_count':self._face_missing_count,
@@ -323,6 +335,9 @@ class IntelligentDriverAssistanceSystem:
                         'mar_threshold':         self.settings.mar_threshold,
                         'stop_time':             self.settings.stop_time,
                         'emergency_brake_dur':   self.settings.emergency_brake_dur,
+                        'peace_cooldown':        self.settings.peace_cooldown,       
+                        'turn_signal_delay':     self.settings.head_turn_time,         
+                        'forward_gaze_cancel':   self.settings.head_turn_off_time,   
                         'pitch_down_threshold':  self.settings.pitch_down_threshold,
                         'pitch_up_threshold':    self.settings.pitch_up_threshold,
                         'tilt_time':             self.settings.tilt_time,
@@ -333,6 +348,8 @@ class IntelligentDriverAssistanceSystem:
                         'enable_tilt':           self.settings.enable_tilt,
                         'enable_turn_signals':   self.settings.enable_turn_signals,
                         'enable_yawns':          self.settings.enable_yawns,
+                        'face_missing_threshold': self.settings.face_missing_time,
+                        'enable_face_missing':    self.settings.enable_face_missing,
                     },
                 }
                 self.streamer.send_update(frame_bgr, state)
@@ -372,11 +389,12 @@ class IntelligentDriverAssistanceSystem:
                         self._last_pitch = pitch
 
                         # Сонливість
-                        drowsy_state, elapsed = self.vehicle.check_drowsiness(
-                            ear, current_time)
-
-                        self._last_eye_closed_time = \
-                            elapsed if drowsy_state in ("drowsy", "emergency") else 0.0
+                        drowsy_state, elapsed = self.vehicle.check_drowsiness(ear, current_time)
+                        if self.vehicle.emergency_stop_active:
+                            self.last_brake_countdown = round(max(0.0, self.settings.emergency_brake_dur - (current_time - self.vehicle.emergency_start_time)), 1)
+                        else:
+                            self.last_brake_countdown = 0.0
+                        self._last_eye_closed_time = elapsed if drowsy_state in ("drowsy", "emergency") else 0.0
 
                         if drowsy_state == "emergency":
                             brake_progress = min(
@@ -440,9 +458,9 @@ class IntelligentDriverAssistanceSystem:
                             else 0.0
 
                         # Поворот голови
-                        head_state, head_elapsed = \
-                            self.vehicle.update_head_position(yaw, current_time)
-
+                        head_state, head_elapsed = self.vehicle.update_head_position(yaw, current_time)
+                        self.last_turn_signal_time = head_elapsed if head_state in ('left_waiting', 'right_waiting') else 0.0
+                        self.last_forward_gaze_time = head_elapsed if head_state == 'straight_waiting' else 0.0
                         if tilt_state == "tilt_emergency":
                             brake_progress = min(
                                 (current_time - self.vehicle.emergency_start_time)
@@ -626,10 +644,7 @@ class IntelligentDriverAssistanceSystem:
                                     self.ui.update_speed_display(
                                         smoothed, self.settings.max_speed_kmh)
 
-                                    if speed == 0 and \
-                                       self.vehicle.yawn_speed_limit and \
-                                       not self.vehicle.yawns_depleted and \
-                                       current_time - self.vehicle.last_gesture_time > 1.0:
+                                    if speed == 0 and self.vehicle.yawn_speed_limit and not self.vehicle.yawns_depleted and current_time - self.vehicle.last_gesture_time > 1.0:
                                         self.vehicle.reset_yawn_limit()
                                         self._update_yawn_limit_label()
                                         self.ui.warning_label.config(
@@ -682,6 +697,12 @@ class IntelligentDriverAssistanceSystem:
                     self._last_eye_closed_time = 0.0
                     self._last_tilt_time       = 0.0
 
+                    if self.vehicle.emergency_stop_active:
+                        self.last_brake_countdown = round(
+                            max(0.0, self.settings.emergency_brake_dur - (current_time - self.vehicle.emergency_start_time)), 1)
+                    else:
+                        self._last_brake_countdown = 0.0
+
                     if self.face_missing_start_time is None:
                         self.face_missing_start_time = current_time
 
@@ -695,8 +716,7 @@ class IntelligentDriverAssistanceSystem:
 
                     elapsed = current_time - self.face_missing_start_time
 
-                    if elapsed >= self.settings.stop_time \
-                       and not self.vehicle.emergency_stop_active:
+                    if self.settings.enable_face_missing and elapsed > self.settings.face_missing_time and not self.vehicle.emergency_stop_active:
                         self.vehicle.emergency_stop_active = True
                         self.vehicle.emergency_signal      = True
                         self.vehicle.emergency_start_time  = current_time
@@ -728,7 +748,7 @@ class IntelligentDriverAssistanceSystem:
                             text="Покажіть peace sign для вимкнення",
                             fg=DANGER_COLOR)
                     else:
-                        remaining = max(0.0, self.settings.stop_time - elapsed)
+                        remaining = max(0.0, self.settings.face_missing_time - elapsed)
                         self.ui.warning_label.config(
                             text=f"Обличчя не виявлено ({elapsed:.1f}с)\n"
                                  f"Аварійка через {remaining:.1f}с",
@@ -775,7 +795,14 @@ class IntelligentDriverAssistanceSystem:
                 total_yawns=self.vehicle.yawn_times,
                 emergency_count=self._emergency_count,
                 face_missing_count=self._face_missing_count)
-        self._stream_queue.put_nowait(None)
+        try:
+            self._stream_queue.put_nowait(None)
+        except queue.Full:
+            try:
+                self._stream_queue.get_nowait()
+            except queue.Empty:
+                pass
+            self._stream_queue.put_nowait(None)
         self.cap.release()
         self.arduino.close()
         self.db.close()
