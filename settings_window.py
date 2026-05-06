@@ -87,7 +87,7 @@ class SettingsWindow:
                      "Тривалість аварійного гальмування (сек)",
                      1.0, 10.0, s.emergency_brake_dur, resolution=0.5)
         self._slider("peace_cooldown",
-                     "Час затримки після відміни аварійки (сек)",
+                     "Час затримки після відміни аварійної сигналізації (сек)",
                      0.5, 10.0, s.peace_cooldown, resolution=0.5)
 
         self._section("Контроль очей")
@@ -97,36 +97,36 @@ class SettingsWindow:
                      "EAR поріг закритих очей (0.10 – 0.40)",
                      0.10, 0.40, s.ear_threshold, resolution=0.01)
         self._slider("stop_time",
-                     "Час закритих очей до аварійки (сек)",
+                     "Час закритих очей до аварійної зупинки (сек)",
                      1.0, 10.0, s.stop_time, resolution=0.5)
 
         self._section("Контроль нахилу голови")
         self._toggle("enable_tilt",
                      "Увімкнути контроль нахилу голови", s.enable_tilt)
         self._slider("pitch_down_threshold",
-                     "Поріг нахилу ВНИЗ (°)",
+                     "Пороговий кут нахилу вгору для аварійної зупинки (градуси)",
                      0, 100, s.pitch_down_threshold)
         self._slider("pitch_up_threshold",
-                     "Поріг нахилу ВГОРУ (°)",
+                     "Пороговий кут нахилу вниз для аварійної зупинки (градуси)",
                      0, 100, s.pitch_up_threshold)
         self._slider("tilt_time",
-                     "Час нахилу голови до аварійки (сек)",
+                     "Час нахилу голови до аварійної зупинки (сек)",
                      0.5, 10.0, s.tilt_time, resolution=0.5)
 
         self._section("Контроль повороту голови (поворотники)")
         self._toggle("enable_turn_signals",
-                     "Увімкнути автоматичні поворотники", s.enable_turn_signals)
+                     "Увімкнути автоматичні поворотники при повороті голови", s.enable_turn_signals)
         self._slider("head_turn_angle_left",
-                     "Кут ЛІВОГО повороту (°)",
+                     "Пороговий кут для лівого поворотника (градуси)",
                      0, 50, s.head_turn_angle_left)
         self._slider("head_turn_angle_right",
-                     "Кут ПРАВОГО повороту (°)",
+                     "Пороговий кут для правого поворотника (градуси)",
                      0, 50, s.head_turn_angle_right)
         self._slider("head_turn_time",
-                     "Час повороту для ВМИКАННЯ (сек)",
+                     "Час повороту для ввімкнення поворотника (сек)",
                      0.5, 5.0, s.head_turn_time, resolution=0.5)
         self._slider("head_turn_off_time",
-                     "Час прямо для ВИМИКАННЯ (сек)",
+                     "Час погляду прямо для вимкнення поворотника (сек)",
                      0.5, 5.0, s.head_turn_off_time, resolution=0.5)
 
         self._section("Контроль позіхань")
@@ -137,13 +137,13 @@ class SettingsWindow:
                      3, 15, s.max_allowed_yawns,
                      resolution=1, is_int=True)
         self._slider("mar_threshold",
-             "MAR поріг позіхання (0.3 – 0.9)",
+             "MAR поріг позіхання (0.30 – 0.90)",
              0.30, 0.90, s.mar_threshold, resolution=0.01)
         self._section("Контроль зникнення обличчя")
         self._toggle("enable_face_missing",
                     "Увімкнути контроль зникнення обличчя", s.enable_face_missing)
         self._slider("face_missing_time",
-                    "Час відсутності обличчя до аварійки (сек)",
+                    "Час відсутності обличчя до аварійної зупинки (сек)",
                     1.0, 10.0, s.face_missing_time, resolution=0.5)
 
     def _section(self, title):
