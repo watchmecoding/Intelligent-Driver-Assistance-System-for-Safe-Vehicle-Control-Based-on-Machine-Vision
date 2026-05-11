@@ -227,7 +227,7 @@ class IntelligentDriverAssistanceSystem:
                 'emergency_count': 0, 'face_missing_count': 0,
                 'driver': self._driver_info,
                 'vehicle': self._vehicle_info,
-                'emergency_cooldown': self.vehicle.emergency_cooldown_remaining,
+                'emergency_cooldown': round(max(0.0, self.settings.peace_cooldown - (time.time() - self.vehicle.last_peace_time)), 1),
                 'settings': {
                     'max_speed_kmh':         self.settings.max_speed_kmh,
                     'ear_threshold':         self.settings.ear_threshold,
@@ -298,6 +298,8 @@ class IntelligentDriverAssistanceSystem:
                 frame = self._stream_queue.get(timeout=1.0)
                 if frame is None:
                     break
+                if not self.is_live:
+                    continue           
                 frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 state = {
                     'is_live':           self.is_live,
@@ -319,8 +321,7 @@ class IntelligentDriverAssistanceSystem:
                                          or self.vehicle.emergency_stop_active,
                     'right_signal':      self.vehicle.right_turn_signal
                                          or self.vehicle.emergency_stop_active,
-                    'brake_active':      self.vehicle.manual_speed <= 0
-                                         or self.vehicle.emergency_stop_active,
+                    'brake_active':      self._prev_brake if self._prev_brake is not None else False,
                     'face_detected':     self._last_face_detected,
                     'yawns':             self.vehicle.yawn_times,
                     'yawn_emergency':    self.vehicle.emergency_stop_active and self._yawn_emergency_counted,
@@ -355,7 +356,6 @@ class IntelligentDriverAssistanceSystem:
                 self.streamer.send_update(frame_bgr, state)
             except queue.Empty:
                 continue
-
 
     # Головний цикл
     def process_frame(self):
