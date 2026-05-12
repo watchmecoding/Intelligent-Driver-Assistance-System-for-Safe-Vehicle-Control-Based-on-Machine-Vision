@@ -11,7 +11,7 @@ import numpy as np
 from config import *
 from face_detector import FaceDetector
 from hand_detector import HandDetector
-from arduino_comm import ArduinoController
+from arduino_controller import ArduinoController
 from vehicle_controller import VehicleController
 from ui_manager import UIManager
 from db_logger import DatabaseLogger
@@ -37,8 +37,9 @@ class IntelligentDriverAssistanceSystem:
 
         self.window = tk.Tk()
         self.ui     = UIManager(self.window)
-
         self.ui.settings_callback = self.open_settings
+
+        self.arduino.vehicle = self.vehicle
 
         self.cap     = cv2.VideoCapture(0)
         self.is_live = False
@@ -99,13 +100,6 @@ class IntelligentDriverAssistanceSystem:
         if not self.settings.enable_yawns:
             self.ui.yawn_limit_label.config(
                 text="Контроль позіхань вимкнено", fg=TEXT_COLOR)
-        elif self.vehicle.yawns_depleted:
-            self.ui.yawn_limit_label.config(
-                text="ОБМЕЖЕННЯ: Макс. 50% (назавжди)!", fg=DANGER_COLOR)
-        elif self.vehicle.yawn_speed_limit:
-            self.ui.yawn_limit_label.config(
-                text="ОБМЕЖЕННЯ: Макс. 50%!", fg=DANGER_COLOR)
-        elif self.vehicle.max_allowed_yawns > 0:
             self.ui.yawn_limit_label.config(
                 text=f"Ліміт: {self.vehicle.max_allowed_yawns} позіхань",
                 fg=WARNING_COLOR)
@@ -369,6 +363,11 @@ class IntelligentDriverAssistanceSystem:
                 hand_results = self.hand_detector.process(frame_rgb)
                 h, w, _      = frame.shape
                 current_time = time.time()
+
+                if self.vehicle.force_stop_requested:
+                    self.vehicle.force_stop_requested = False
+                    self.vehicle.set_speed(0, force_stop=True)
+                    self.ui.update_speed_display(0, self.settings.max_speed_kmh)
 
                 if face_results.multi_face_landmarks:
                     self._last_face_detected     = True
@@ -753,9 +752,9 @@ class IntelligentDriverAssistanceSystem:
                             text=f"Обличчя не виявлено ({elapsed:.1f}с)\n"
                                  f"Аварійка через {remaining:.1f}с",
                             fg=WARNING_COLOR if remaining > 1.0 else DANGER_COLOR)
-                        self.ui.status_label.config(
-                            text=f"Обличчя не виявлено ({elapsed:.1f}с)",
-                            fg=DANGER_COLOR)
+                        # self.ui.status_label.config(
+                        #     text=f"Обличчя не виявлено ({elapsed:.1f}с)",
+                        #     fg=DANGER_COLOR)
                         self.ui.gesture_label.config(
                             text="Рух заблоковано", fg=DANGER_COLOR)
 

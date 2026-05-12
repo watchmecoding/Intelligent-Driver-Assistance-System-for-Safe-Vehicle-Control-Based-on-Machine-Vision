@@ -8,20 +8,18 @@ class VehicleController:
     def __init__(self, arduino_controller):
         self.arduino   = arduino_controller
         self.settings  = SettingsManager()
-
+        self.force_stop_requested  = False
         self.emergency_stop_active = False
         self.emergency_signal      = False
         self.emergency_start_time  = 0.0
         self.emergency_start_speed = 0.0
 
-        self.yawn_speed_limit  = False
         self.left_turn_signal  = False
         self.right_turn_signal = False
 
         self.yawn_times        = 0
         self.consecutive_yawns = 0
         self.max_allowed_yawns = self.settings.max_allowed_yawns
-        self.yawns_depleted    = False
 
         self.eye_closed_start_time  = None
         self.tilt_down_start_time = None
@@ -207,16 +205,11 @@ class VehicleController:
             self.arduino.send_speed(target)
             return round(target)
 
-        if self.yawns_depleted and speed_percent > 50:
-            speed_percent = 50
-        if self.yawn_speed_limit and speed_percent > 50:
-            speed_percent = 50
+
 
         self.speed_buffer.append(speed_percent)
         smoothed = sum(self.speed_buffer) / len(self.speed_buffer)
 
-        if self.yawn_speed_limit and smoothed > 50:
-            smoothed = 50
 
         self.manual_speed = smoothed
         self.arduino.send_speed(smoothed)
@@ -244,11 +237,9 @@ class VehicleController:
     def reset_all_yawn_counters(self):
         self.yawn_times        = 0
         self.consecutive_yawns = 0
-        self.yawn_speed_limit  = False
         self.yawn_frame_count  = 0
         self.is_yawning        = False
         self.max_allowed_yawns = self.settings.max_allowed_yawns
-        self.yawns_depleted    = False
 
     def update_brake_signal(self):
         if self.manual_speed <= 0:

@@ -1,6 +1,6 @@
-//dashboard.js
+//static/js/dashboard.js
 
-// ── Утиліти ──────────────────────────────────────────────────────
+// Утиліти
 const f2 = v => (v != null ? (+v).toFixed(2) : '—');
 const f1 = v => (v != null ? (+v).toFixed(1) : '—');
 const f0 = v => (v != null ? Math.round(+v) : '—');
@@ -15,7 +15,7 @@ function fmtDur(sec) {
     return `${s}с`;
 }
 
-// ── Таблиця метрик ───────────────────────────────────────────────
+// Таблиця метрик
 function mv(cls, txt) {
     return `<span class="mval ${cls}">${txt}</span>`;
 }

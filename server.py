@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 import json
 import time
-
+import logging
 
 app = Flask(__name__)
 
@@ -15,11 +15,12 @@ _frame    = None
 _state    = {}
 _sessions = []
 
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 @app.route('/')
 def index():
     return render_template('dashboard.html')
-
 
 @app.route('/video_feed')
 def video_feed():
