@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 
 _lock     = threading.Lock()
-_frame    = None
+_frame    = b''
 _state    = {}
 _sessions = []
 
@@ -45,6 +45,7 @@ def video_feed():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' +
                    jpeg.tobytes() + b'\r\n')
+            time.sleep(0.033)
 
     return Response(generate(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -108,7 +109,10 @@ def run_server(host='0.0.0.0', port=5000):
     local_ip = s.getsockname()[0]
     s.close()
     print(f"Дашборд доступний: http://{local_ip}:{port}")
-    app.run(host=host, port=port, threaded=True, use_reloader=False)
+    try:
+        app.run(host=host, port=port, threaded=True, use_reloader=False, debug=False)
+    except OSError as e:
+        print(f"Сервер не запустився: {e}")
 
 
 if __name__ == '__main__':

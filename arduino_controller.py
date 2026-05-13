@@ -19,6 +19,13 @@ class ArduinoController:
         threading.Thread(target=self.connect, daemon=True).start()
 
     def connect(self):
+        try:
+            if self.serial and self.serial.is_open:
+                self.serial.close()
+        except Exception:
+            pass
+        self.serial = None
+                
         ports = serial.tools.list_ports.comports()
 
         for p in ports:
@@ -79,24 +86,23 @@ class ArduinoController:
             except Exception as e:
                 self._handle_disconnect(str(e))
 
-    def _try_reconnect(self, attempts=10, delay=1.0):
+    def _try_reconnect(self, delay=1.0):
         if self._reconnecting:
             return
         self._reconnecting = True
 
         def _worker():
-            for i in range(attempts):
+            i = 0
+            while not self.connected:
+                i += 1
                 if self.log_callback:
-                    self.log_callback(
-                        f"Спроба перепідключення Arduino ({i+1}/{attempts})...")
+                    self.log_callback(f"Спроба перепідключення Arduino ({i})...")
                 self.connect()
                 if self.connected:
                     self._last_speed = -1
                     self._reconnecting = False
                     return
                 time.sleep(delay)
-            if self.log_callback:
-                self.log_callback("Arduino недоступне після перепідключення.")
             self._reconnecting = False
 
         threading.Thread(target=_worker, daemon=True).start()

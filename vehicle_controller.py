@@ -251,8 +251,8 @@ class VehicleController:
             self.prev_speed = self.manual_speed
             return True
 
-        if self.manual_speed < self.prev_speed - 2:
-            self.brake_cooldown = 10
+        if self.manual_speed < self.prev_speed - 0.5:
+            self.brake_cooldown =15
             result = True
         elif self.brake_cooldown > 0:
             self.brake_cooldown -= 1
