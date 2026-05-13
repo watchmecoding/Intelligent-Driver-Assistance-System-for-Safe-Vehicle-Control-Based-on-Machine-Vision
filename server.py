@@ -6,6 +6,7 @@ import cv2
 import json
 import time
 import logging
+import socket
 
 app = Flask(__name__)
 
@@ -102,6 +103,11 @@ def push_frame_direct(frame_bgr, state_dict):
 
 
 def run_server(host='0.0.0.0', port=5000):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    local_ip = s.getsockname()[0]
+    s.close()
+    print(f"Дашборд доступний: http://{local_ip}:{port}")
     app.run(host=host, port=port, threaded=True, use_reloader=False)
 
 

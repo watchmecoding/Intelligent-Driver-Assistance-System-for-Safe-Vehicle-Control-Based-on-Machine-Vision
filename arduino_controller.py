@@ -15,7 +15,8 @@ class ArduinoController:
         self.speed_reset_callback = None 
         self._last_speed          = -1
         self._reconnecting        = False
-        self.connect()
+        self._write_lock          = threading.Lock()  # ← ДОДАТИ
+        threading.Thread(target=self.connect, daemon=True).start()
 
     def connect(self):
         ports = serial.tools.list_ports.comports()
@@ -28,7 +29,7 @@ class ArduinoController:
                    for k in ('Arduino', 'CH340', 'USB')):
                 try:
                     self.serial = serial.Serial(
-                        port.device, 9600, timeout=1)
+                        port.device, 9600, timeout=0.1)
                     time.sleep(2)
                     self.connected = True
                     if self.log_callback:
@@ -61,14 +62,18 @@ class ArduinoController:
         self._try_reconnect()
 
     def send_command(self, command):
-        if self.connected and self.serial:
+        if not self.connected or not self.serial:
+            return
+        with self._write_lock:
             try:
                 self.serial.write(f"{command}\n".encode())
             except Exception as e:
                 self._handle_disconnect(str(e))
 
     def send_signal(self, signal, state):
-        if self.connected and self.serial:
+        if not self.connected or not self.serial:
+            return
+        with self._write_lock:
             try:
                 self.serial.write(f"{signal}:{state}\n".encode())
             except Exception as e:

@@ -643,14 +643,6 @@ class IntelligentDriverAssistanceSystem:
                                     self.ui.update_speed_display(
                                         smoothed, self.settings.max_speed_kmh)
 
-                                    if speed == 0 and self.vehicle.yawn_speed_limit and not self.vehicle.yawns_depleted and current_time - self.vehicle.last_gesture_time > 1.0:
-                                        self.vehicle.reset_yawn_limit()
-                                        self._update_yawn_limit_label()
-                                        self.ui.warning_label.config(
-                                            text="Обмеження скинуто",
-                                            fg=SUCCESS_COLOR)
-                                        self.vehicle.last_gesture_time = current_time
-
                                     self.ui.gesture_label.config(
                                         text=f"Щипок: {int(speed)}%",
                                         fg=TEXT_COLOR)

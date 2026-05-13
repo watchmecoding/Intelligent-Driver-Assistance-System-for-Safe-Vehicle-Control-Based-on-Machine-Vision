@@ -5,21 +5,22 @@ import queue
 import threading
 import requests
 import server as _server
-
+import time
 class StreamingClient:
     def __init__(self, server_url):
         self.url       = server_url.rstrip('/')
         self.connected = False
-        self._queue    = queue.Queue(maxsize=1)
+        self._queue    = queue.Queue(maxsize=2)
         self._session  = requests.Session()
 
+        threading.Thread(target=self._worker, daemon=True).start()
         threading.Thread(
             target=_server.run_server,
             kwargs={'host': '0.0.0.0', 'port': 5000},
             daemon=True,
         ).start()
 
-        threading.Thread(target=self._worker, daemon=True).start()
+        time.sleep(0.5)
         self._ping()
 
     def _ping(self):

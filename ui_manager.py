@@ -68,8 +68,8 @@ class UIManager:
         header_frame.pack(fill=tk.X, pady=(0, 5))
         header_frame.pack_propagate(False)
 
-        Label(header_frame, text="Інтелектуальна система асистування водію (Made by Vitaliy Volnushkin IK-23)",
-              font=("Segoe UI", 20, "bold"), bg=ACCENT_COLOR,
+        Label(header_frame, text="Інтелектуальна система асистування водію в безпечному керуванні автотранспортним засобом на основі технічного зору",
+              font=("Segoe UI", 18, "bold"), bg=ACCENT_COLOR,
               fg=TEXT_COLOR).pack(pady=15)
 
         main_container = Frame(self.window, bg=BG_COLOR)
