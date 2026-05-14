@@ -1,0 +1,467 @@
+2026-05-14 13:07:09,674 | BRAKE ACK latency: 3.77 ms
+2026-05-14 13:07:13,495 | BRAKE ACK latency: 3.74 ms
+2026-05-14 13:07:14,058 | BRAKE ACK latency: 3.82 ms
+2026-05-14 13:07:19,252 | drowsy -> ALARM: 4036.07 ms
+2026-05-14 13:07:19,255 | ALARM ACK latency: 3.72 ms
+2026-05-14 13:07:19,427 | LEFT ACK latency: 4.07 ms
+2026-05-14 13:07:19,427 | RIGHT ACK latency: 4.34 ms
+2026-05-14 13:07:20,112 | LEFT ACK latency: 5.49 ms
+2026-05-14 13:07:20,113 | RIGHT ACK latency: 6.26 ms
+2026-05-14 13:07:21,257 | --- PERF REPORT @ frame 300 ---
+face_process_ms          avg=   5.92 ms | med=   5.82 ms | p95=   6.78 ms | min=   5.00 ms | max=  12.98 ms
+hand_process_ms          avg=  24.66 ms | med=  24.78 ms | p95=  27.93 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  40.45 ms | med=  40.68 ms | p95=  47.44 ms | min=  30.50 ms | max=  60.43 ms
+brake_ack_ms             avg=   3.78 ms | med=   3.77 ms | p95=   3.77 ms | min=   3.74 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:07:26,422 | BRAKE ACK latency: 2.08 ms
+2026-05-14 13:07:32,473 | --- PERF REPORT @ frame 600 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:07:42,476 | --- PERF REPORT @ frame 900 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:07:52,485 | --- PERF REPORT @ frame 1200 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:08:02,492 | --- PERF REPORT @ frame 1500 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:08:12,483 | --- PERF REPORT @ frame 1800 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:08:22,492 | --- PERF REPORT @ frame 2100 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:08:32,488 | --- PERF REPORT @ frame 2400 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:08:42,474 | --- PERF REPORT @ frame 2700 ---
+face_process_ms          avg=   5.89 ms | med=   5.80 ms | p95=   6.86 ms | min=   4.95 ms | max=   8.41 ms
+hand_process_ms          avg=  24.80 ms | med=  24.94 ms | p95=  28.26 ms | min=  18.14 ms | max=  43.89 ms
+live_block_ms            avg=  41.01 ms | med=  41.17 ms | p95=  49.39 ms | min=  32.27 ms | max=  68.15 ms
+brake_ack_ms             avg=   3.35 ms | med=   3.76 ms | p95=   3.77 ms | min=   2.08 ms | max=   3.82 ms
+drowsy_to_cmd_ms         avg=4036.07 ms | med=4036.07 ms | p95=4036.07 ms | min=4036.07 ms | max=4036.07 ms
+alarm_ack_ms             avg=   3.72 ms | med=   3.72 ms | p95=   3.72 ms | min=   3.72 ms | max=   3.72 ms
+left_ack_ms              avg=   4.78 ms | med=   4.78 ms | p95=   4.07 ms | min=   4.07 ms | max=   5.49 ms
+right_ack_ms             avg=   5.30 ms | med=   5.30 ms | p95=   4.34 ms | min=   4.34 ms | max=   6.26 ms
+2026-05-14 13:11:29,042 | --- PERF REPORT @ frame 300 ---
+2026-05-14 13:11:39,043 | --- PERF REPORT @ frame 600 ---
+2026-05-14 13:11:49,024 | --- PERF REPORT @ frame 900 ---
+2026-05-14 13:11:59,026 | --- PERF REPORT @ frame 1200 ---
+2026-05-14 13:12:09,023 | --- PERF REPORT @ frame 1500 ---
+2026-05-14 13:12:19,029 | --- PERF REPORT @ frame 1800 ---
+2026-05-14 13:12:29,038 | --- PERF REPORT @ frame 2100 ---
+2026-05-14 13:12:39,033 | --- PERF REPORT @ frame 2400 ---
+2026-05-14 13:12:49,026 | --- PERF REPORT @ frame 2700 ---
+2026-05-14 13:12:59,016 | --- PERF REPORT @ frame 3000 ---
+2026-05-14 13:13:09,023 | --- PERF REPORT @ frame 3300 ---
+2026-05-14 13:13:19,036 | --- PERF REPORT @ frame 3600 ---
+2026-05-14 13:13:29,039 | --- PERF REPORT @ frame 3900 ---
+2026-05-14 13:13:39,042 | --- PERF REPORT @ frame 4200 ---
+2026-05-14 13:13:49,042 | --- PERF REPORT @ frame 4500 ---
+2026-05-14 13:13:59,020 | --- PERF REPORT @ frame 4800 ---
+2026-05-14 13:14:09,017 | --- PERF REPORT @ frame 5100 ---
+2026-05-14 13:14:19,031 | --- PERF REPORT @ frame 5400 ---
+2026-05-14 13:14:29,042 | --- PERF REPORT @ frame 5700 ---
+2026-05-14 13:14:39,033 | --- PERF REPORT @ frame 6000 ---
+2026-05-14 13:14:49,033 | --- PERF REPORT @ frame 6300 ---
+2026-05-14 13:14:59,021 | --- PERF REPORT @ frame 6600 ---
+2026-05-14 13:15:09,029 | --- PERF REPORT @ frame 6900 ---
+2026-05-14 13:15:19,020 | --- PERF REPORT @ frame 7200 ---
+2026-05-14 13:15:29,033 | --- PERF REPORT @ frame 7500 ---
+2026-05-14 13:15:39,045 | --- PERF REPORT @ frame 7800 ---
+2026-05-14 13:15:49,051 | --- PERF REPORT @ frame 8100 ---
+2026-05-14 13:15:59,052 | --- PERF REPORT @ frame 8400 ---
+2026-05-14 13:16:09,029 | --- PERF REPORT @ frame 8700 ---
+2026-05-14 13:16:19,034 | --- PERF REPORT @ frame 9000 ---
+2026-05-14 13:16:29,024 | --- PERF REPORT @ frame 9300 ---
+2026-05-14 13:16:39,042 | --- PERF REPORT @ frame 9600 ---
+2026-05-14 13:16:49,044 | --- PERF REPORT @ frame 9900 ---
+2026-05-14 13:16:59,048 | --- PERF REPORT @ frame 10200 ---
+2026-05-14 13:17:09,031 | --- PERF REPORT @ frame 10500 ---
+2026-05-14 13:17:19,023 | --- PERF REPORT @ frame 10800 ---
+2026-05-14 13:17:29,030 | --- PERF REPORT @ frame 11100 ---
+2026-05-14 13:17:39,043 | --- PERF REPORT @ frame 11400 ---
+2026-05-14 13:17:49,050 | --- PERF REPORT @ frame 11700 ---
+2026-05-14 13:17:59,058 | --- PERF REPORT @ frame 12000 ---
+2026-05-14 13:18:09,051 | --- PERF REPORT @ frame 12300 ---
+2026-05-14 13:18:19,036 | --- PERF REPORT @ frame 12600 ---
+2026-05-14 13:18:29,037 | --- PERF REPORT @ frame 12900 ---
+2026-05-14 13:18:39,039 | --- PERF REPORT @ frame 13200 ---
+2026-05-14 13:18:49,044 | --- PERF REPORT @ frame 13500 ---
+2026-05-14 13:18:59,045 | --- PERF REPORT @ frame 13800 ---
+2026-05-14 13:19:09,029 | --- PERF REPORT @ frame 14100 ---
+2026-05-14 13:19:19,075 | --- PERF REPORT @ frame 14400 ---
+2026-05-14 13:19:29,027 | --- PERF REPORT @ frame 14700 ---
+2026-05-14 13:19:39,042 | --- PERF REPORT @ frame 15000 ---
+2026-05-14 13:19:49,028 | --- PERF REPORT @ frame 15300 ---
+2026-05-14 13:19:59,018 | --- PERF REPORT @ frame 15600 ---
+2026-05-14 13:20:09,018 | --- PERF REPORT @ frame 15900 ---
+2026-05-14 13:20:11,704 | BRAKE ACK latency: 4.60 ms
+2026-05-14 13:20:23,675 | tilt -> BRAKE: 258.74 ms
+2026-05-14 13:20:23,676 | --- PERF REPORT @ frame 16200 ---
+face_process_ms          avg=   7.17 ms | med=   6.91 ms | p95=   9.20 ms | min=   5.27 ms | max=  14.73 ms
+hand_process_ms          avg=  33.08 ms | med=  31.43 ms | p95=  48.38 ms | min=  20.77 ms | max=  74.13 ms
+live_block_ms            avg=  46.78 ms | med=  44.63 ms | p95=  61.46 ms | min=  31.94 ms | max=  90.92 ms
+brake_ack_ms             avg=   4.60 ms | med=   4.60 ms | p95=   4.60 ms | min=   4.60 ms | max=   4.60 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+2026-05-14 13:20:23,680 | BRAKE ACK latency: 4.21 ms
+2026-05-14 13:20:26,497 | BRAKE ACK latency: 4.58 ms
+2026-05-14 13:20:31,758 | BRAKE ACK latency: 3.73 ms
+2026-05-14 13:20:32,745 | right_turn -> RIGHT: 2200.51 ms
+2026-05-14 13:20:32,750 | RIGHT ACK latency: 5.44 ms
+2026-05-14 13:20:33,424 | right_turn -> RIGHT: 2879.85 ms
+2026-05-14 13:20:33,427 | RIGHT ACK latency: 3.74 ms
+2026-05-14 13:20:34,099 | right_turn -> RIGHT: 3554.97 ms
+2026-05-14 13:20:34,104 | RIGHT ACK latency: 4.86 ms
+2026-05-14 13:20:34,246 | BRAKE ACK latency: 4.72 ms
+2026-05-14 13:20:34,778 | RIGHT ACK latency: 3.63 ms
+2026-05-14 13:20:35,450 | RIGHT ACK latency: 3.92 ms
+2026-05-14 13:20:36,119 | RIGHT ACK latency: 3.57 ms
+2026-05-14 13:20:38,336 | --- PERF REPORT @ frame 16500 ---
+face_process_ms          avg=   6.76 ms | med=   6.57 ms | p95=   8.68 ms | min=   5.23 ms | max=  10.29 ms
+hand_process_ms          avg=  28.00 ms | med=  27.70 ms | p95=  36.26 ms | min=  19.28 ms | max=  60.94 ms
+live_block_ms            avg=  43.11 ms | med=  42.28 ms | p95=  50.52 ms | min=  32.36 ms | max=  72.91 ms
+brake_ack_ms             avg=   4.37 ms | med=   4.58 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=2878.44 ms | med=2879.85 ms | p95=2879.85 ms | min=2200.51 ms | max=3554.97 ms
+right_ack_ms             avg=   4.19 ms | med=   3.83 ms | p95=   4.86 ms | min=   3.57 ms | max=   5.44 ms
+2026-05-14 13:20:41,570 | right_turn -> RIGHT: 2571.09 ms
+2026-05-14 13:20:41,574 | RIGHT ACK latency: 3.63 ms
+2026-05-14 13:20:42,240 | right_turn -> RIGHT: 3241.38 ms
+2026-05-14 13:20:42,244 | RIGHT ACK latency: 3.31 ms
+2026-05-14 13:20:42,919 | right_turn -> RIGHT: 3920.50 ms
+2026-05-14 13:20:42,923 | RIGHT ACK latency: 3.55 ms
+2026-05-14 13:20:43,600 | right_turn -> RIGHT: 4600.89 ms
+2026-05-14 13:20:43,604 | RIGHT ACK latency: 3.78 ms
+2026-05-14 13:20:44,278 | right_turn -> RIGHT: 5278.96 ms
+2026-05-14 13:20:44,282 | RIGHT ACK latency: 3.92 ms
+2026-05-14 13:20:44,947 | right_turn -> RIGHT: 5948.31 ms
+2026-05-14 13:20:44,951 | RIGHT ACK latency: 3.63 ms
+2026-05-14 13:20:45,619 | RIGHT ACK latency: 3.73 ms
+2026-05-14 13:20:46,307 | RIGHT ACK latency: 3.80 ms
+2026-05-14 13:20:46,996 | RIGHT ACK latency: 4.61 ms
+2026-05-14 13:20:47,678 | left_turn -> LEFT: 2340.24 ms
+2026-05-14 13:20:47,682 | LEFT ACK latency: 3.87 ms
+2026-05-14 13:20:48,354 | left_turn -> LEFT: 3016.98 ms
+2026-05-14 13:20:48,359 | LEFT ACK latency: 3.91 ms
+2026-05-14 13:20:49,023 | left_turn -> LEFT: 3685.94 ms
+2026-05-14 13:20:49,027 | LEFT ACK latency: 3.62 ms
+2026-05-14 13:20:49,704 | left_turn -> LEFT: 4366.68 ms
+2026-05-14 13:20:49,707 | LEFT ACK latency: 3.56 ms
+2026-05-14 13:20:50,381 | LEFT ACK latency: 3.95 ms
+2026-05-14 13:20:51,068 | LEFT ACK latency: 3.63 ms
+2026-05-14 13:20:51,746 | LEFT ACK latency: 3.64 ms
+2026-05-14 13:20:52,422 | LEFT ACK latency: 3.70 ms
+2026-05-14 13:20:53,359 | --- PERF REPORT @ frame 16800 ---
+face_process_ms          avg=   6.86 ms | med=   6.69 ms | p95=   8.64 ms | min=   5.07 ms | max=  10.31 ms
+hand_process_ms          avg=  31.50 ms | med=  29.92 ms | p95=  45.43 ms | min=  21.05 ms | max=  61.25 ms
+live_block_ms            avg=  44.49 ms | med=  42.58 ms | p95=  60.85 ms | min=  36.65 ms | max=  73.99 ms
+brake_ack_ms             avg=   4.37 ms | med=   4.58 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3799.61 ms | med=3554.97 ms | p95=5278.96 ms | min=2200.51 ms | max=5948.31 ms
+right_ack_ms             avg=   3.94 ms | med=   3.74 ms | p95=   4.86 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=3352.46 ms | med=3351.46 ms | p95=3685.94 ms | min=2340.24 ms | max=4366.68 ms
+left_ack_ms              avg=   3.73 ms | med=   3.67 ms | p95=   3.91 ms | min=   3.56 ms | max=   3.95 ms
+2026-05-14 13:21:10,455 | --- PERF REPORT @ frame 17100 ---
+face_process_ms          avg=   7.05 ms | med=   6.86 ms | p95=   9.05 ms | min=   5.20 ms | max=  10.71 ms
+hand_process_ms          avg=  36.36 ms | med=  31.47 ms | p95=  58.37 ms | min=  25.64 ms | max=  71.89 ms
+live_block_ms            avg=  51.08 ms | med=  45.11 ms | p95=  72.87 ms | min=  36.79 ms | max= 160.93 ms
+brake_ack_ms             avg=   4.37 ms | med=   4.58 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3799.61 ms | med=3554.97 ms | p95=5278.96 ms | min=2200.51 ms | max=5948.31 ms
+right_ack_ms             avg=   3.94 ms | med=   3.74 ms | p95=   4.86 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=3352.46 ms | med=3351.46 ms | p95=3685.94 ms | min=2340.24 ms | max=4366.68 ms
+left_ack_ms              avg=   3.73 ms | med=   3.67 ms | p95=   3.91 ms | min=   3.56 ms | max=   3.95 ms
+2026-05-14 13:21:24,867 | left_turn -> LEFT: 2192.30 ms
+2026-05-14 13:21:24,871 | LEFT ACK latency: 3.59 ms
+2026-05-14 13:21:25,555 | left_turn -> LEFT: 2880.20 ms
+2026-05-14 13:21:25,561 | LEFT ACK latency: 5.40 ms
+2026-05-14 13:21:25,607 | --- PERF REPORT @ frame 17400 ---
+face_process_ms          avg=   7.02 ms | med=   6.82 ms | p95=   9.00 ms | min=   5.45 ms | max=  12.45 ms
+hand_process_ms          avg=  31.25 ms | med=  30.38 ms | p95=  37.02 ms | min=  25.42 ms | max=  52.97 ms
+live_block_ms            avg=  44.81 ms | med=  43.71 ms | p95=  52.72 ms | min=  36.99 ms | max= 161.96 ms
+brake_ack_ms             avg=   4.37 ms | med=   4.58 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3799.61 ms | med=3554.97 ms | p95=5278.96 ms | min=2200.51 ms | max=5948.31 ms
+right_ack_ms             avg=   3.94 ms | med=   3.74 ms | p95=   4.86 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=3080.39 ms | med=2948.59 ms | p95=3685.94 ms | min=2192.30 ms | max=4366.68 ms
+left_ack_ms              avg=   3.89 ms | med=   3.67 ms | p95=   3.95 ms | min=   3.56 ms | max=   5.40 ms
+2026-05-14 13:21:26,223 | left_turn -> LEFT: 3548.67 ms
+2026-05-14 13:21:26,226 | LEFT ACK latency: 3.52 ms
+2026-05-14 13:21:26,895 | left_turn -> LEFT: 4219.58 ms
+2026-05-14 13:21:26,898 | LEFT ACK latency: 3.44 ms
+2026-05-14 13:21:27,570 | LEFT ACK latency: 4.14 ms
+2026-05-14 13:21:27,813 | BRAKE ACK latency: 4.47 ms
+2026-05-14 13:21:28,236 | LEFT ACK latency: 3.56 ms
+2026-05-14 13:21:28,914 | left_turn -> LEFT: 517.39 ms
+2026-05-14 13:21:28,918 | LEFT ACK latency: 3.28 ms
+2026-05-14 13:21:29,592 | left_turn -> LEFT: 1195.30 ms
+2026-05-14 13:21:29,596 | LEFT ACK latency: 3.78 ms
+2026-05-14 13:21:30,272 | LEFT ACK latency: 4.02 ms
+2026-05-14 13:21:30,944 | left_turn -> LEFT: 278.94 ms
+2026-05-14 13:21:30,947 | LEFT ACK latency: 3.72 ms
+2026-05-14 13:21:31,620 | left_turn -> LEFT: 956.31 ms
+2026-05-14 13:21:31,623 | LEFT ACK latency: 3.66 ms
+2026-05-14 13:21:32,296 | left_turn -> LEFT: 1631.41 ms
+2026-05-14 13:21:32,300 | LEFT ACK latency: 4.06 ms
+2026-05-14 13:21:32,981 | left_turn -> LEFT: 2316.18 ms
+2026-05-14 13:21:32,984 | LEFT ACK latency: 3.80 ms
+2026-05-14 13:21:33,658 | left_turn -> LEFT: 2992.88 ms
+2026-05-14 13:21:33,662 | LEFT ACK latency: 4.50 ms
+2026-05-14 13:21:34,344 | left_turn -> LEFT: 3680.40 ms
+2026-05-14 13:21:34,349 | LEFT ACK latency: 4.02 ms
+2026-05-14 13:21:35,024 | left_turn -> LEFT: 4359.72 ms
+2026-05-14 13:21:35,027 | LEFT ACK latency: 3.42 ms
+2026-05-14 13:21:35,703 | LEFT ACK latency: 3.59 ms
+2026-05-14 13:21:36,390 | LEFT ACK latency: 3.56 ms
+2026-05-14 13:21:37,069 | LEFT ACK latency: 3.96 ms
+2026-05-14 13:21:37,739 | LEFT ACK latency: 3.70 ms
+2026-05-14 13:21:38,408 | LEFT ACK latency: 3.92 ms
+2026-05-14 13:21:39,085 | LEFT ACK latency: 3.35 ms
+2026-05-14 13:21:39,751 | right_turn -> RIGHT: 2510.66 ms
+2026-05-14 13:21:39,755 | RIGHT ACK latency: 4.23 ms
+2026-05-14 13:21:40,440 | RIGHT ACK latency: 5.40 ms
+2026-05-14 13:21:41,110 | RIGHT ACK latency: 3.77 ms
+2026-05-14 13:21:41,172 | --- PERF REPORT @ frame 17700 ---
+face_process_ms          avg=   6.96 ms | med=   6.70 ms | p95=   9.21 ms | min=   5.19 ms | max=  10.28 ms
+hand_process_ms          avg=  33.59 ms | med=  30.31 ms | p95=  53.39 ms | min=  18.77 ms | max=  62.56 ms
+live_block_ms            avg=  46.25 ms | med=  43.35 ms | p95=  66.26 ms | min=  35.98 ms | max=  73.03 ms
+brake_ack_ms             avg=   4.38 ms | med=   4.52 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3670.71 ms | med=3398.17 ms | p95=5278.96 ms | min=2200.51 ms | max=5948.31 ms
+right_ack_ms             avg=   4.03 ms | med=   3.78 ms | p95=   5.40 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=2598.77 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.80 ms | med=   3.70 ms | p95=   4.14 ms | min=   3.28 ms | max=   5.40 ms
+2026-05-14 13:21:41,795 | RIGHT ACK latency: 4.25 ms
+2026-05-14 13:21:42,472 | right_turn -> RIGHT: 337.67 ms
+2026-05-14 13:21:42,476 | RIGHT ACK latency: 3.79 ms
+2026-05-14 13:21:43,145 | RIGHT ACK latency: 4.04 ms
+2026-05-14 13:21:43,837 | RIGHT ACK latency: 3.73 ms
+2026-05-14 13:21:44,508 | RIGHT ACK latency: 3.75 ms
+2026-05-14 13:21:56,571 | --- PERF REPORT @ frame 18000 ---
+face_process_ms          avg=   6.88 ms | med=   6.65 ms | p95=   8.70 ms | min=   5.29 ms | max=  12.43 ms
+hand_process_ms          avg=  32.32 ms | med=  31.04 ms | p95=  48.41 ms | min=  26.05 ms | max=  60.14 ms
+live_block_ms            avg=  45.59 ms | med=  43.82 ms | p95=  61.65 ms | min=  37.57 ms | max= 141.08 ms
+brake_ack_ms             avg=   4.38 ms | med=   4.52 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.00 ms | med=   3.78 ms | p95=   4.86 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=2598.77 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.80 ms | med=   3.70 ms | p95=   4.14 ms | min=   3.28 ms | max=   5.40 ms
+2026-05-14 13:22:06,539 | BRAKE ACK latency: 3.79 ms
+2026-05-14 13:22:10,077 | --- PERF REPORT @ frame 18300 ---
+face_process_ms          avg=   7.26 ms | med=   7.02 ms | p95=   9.54 ms | min=   5.42 ms | max=  16.51 ms
+hand_process_ms          avg=  32.81 ms | med=  31.71 ms | p95=  40.97 ms | min=  26.13 ms | max=  66.76 ms
+live_block_ms            avg=  46.69 ms | med=  44.53 ms | p95=  60.95 ms | min=  36.05 ms | max= 232.79 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.00 ms | med=   3.78 ms | p95=   4.86 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=2598.77 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.80 ms | med=   3.70 ms | p95=   4.14 ms | min=   3.28 ms | max=   5.40 ms
+2026-05-14 13:22:10,354 | left_turn -> LEFT: 2595.28 ms
+2026-05-14 13:22:10,358 | LEFT ACK latency: 3.63 ms
+2026-05-14 13:22:11,022 | left_turn -> LEFT: 3264.18 ms
+2026-05-14 13:22:11,027 | LEFT ACK latency: 3.78 ms
+2026-05-14 13:22:11,729 | LEFT ACK latency: 3.57 ms
+2026-05-14 13:22:12,399 | LEFT ACK latency: 5.54 ms
+2026-05-14 13:22:13,067 | LEFT ACK latency: 3.38 ms
+2026-05-14 13:22:25,271 | --- PERF REPORT @ frame 18600 ---
+face_process_ms          avg=   7.05 ms | med=   6.70 ms | p95=   9.57 ms | min=   4.97 ms | max=  12.11 ms
+hand_process_ms          avg=  31.47 ms | med=  30.83 ms | p95=  37.37 ms | min=  26.06 ms | max=  66.39 ms
+live_block_ms            avg=  44.85 ms | med=  43.23 ms | p95=  52.49 ms | min=  36.88 ms | max= 147.34 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg= 258.74 ms | med= 258.74 ms | p95= 258.74 ms | min= 258.74 ms | max= 258.74 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.00 ms | med=   3.78 ms | p95=   4.86 ms | min=   3.31 ms | max=   5.44 ms
+left_turn_to_cmd_ms      avg=2633.61 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.82 ms | med=   3.70 ms | p95=   4.50 ms | min=   3.28 ms | max=   5.54 ms
+2026-05-14 13:22:30,625 | tilt -> ALARM: 4048.22 ms
+2026-05-14 13:22:30,629 | ALARM ACK latency: 3.95 ms
+2026-05-14 13:22:30,629 | LEFT ACK latency: 3.90 ms
+2026-05-14 13:22:30,632 | RIGHT ACK latency: 6.46 ms
+2026-05-14 13:22:31,333 | LEFT ACK latency: 3.92 ms
+2026-05-14 13:22:31,333 | RIGHT ACK latency: 4.09 ms
+2026-05-14 13:22:32,035 | LEFT ACK latency: 3.87 ms
+2026-05-14 13:22:32,035 | RIGHT ACK latency: 3.73 ms
+2026-05-14 13:22:40,107 | --- PERF REPORT @ frame 18900 ---
+face_process_ms          avg=   6.81 ms | med=   6.55 ms | p95=   8.69 ms | min=   5.14 ms | max=  11.60 ms
+hand_process_ms          avg=  30.19 ms | med=  29.88 ms | p95=  35.69 ms | min=  19.22 ms | max=  47.48 ms
+live_block_ms            avg=  43.81 ms | med=  42.56 ms | p95=  50.05 ms | min=  32.30 ms | max= 218.15 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2633.61 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.83 ms | med=   3.71 ms | p95=   4.50 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:22:55,626 | --- PERF REPORT @ frame 19200 ---
+face_process_ms          avg=   6.99 ms | med=   6.73 ms | p95=   8.78 ms | min=   5.13 ms | max=  11.39 ms
+hand_process_ms          avg=  32.44 ms | med=  30.62 ms | p95=  45.92 ms | min=  25.74 ms | max=  63.36 ms
+live_block_ms            avg=  46.09 ms | med=  43.69 ms | p95=  62.49 ms | min=  36.39 ms | max= 143.44 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2633.61 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.83 ms | med=   3.71 ms | p95=   4.50 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:23:11,021 | --- PERF REPORT @ frame 19500 ---
+face_process_ms          avg=   6.92 ms | med=   6.72 ms | p95=   8.79 ms | min=   5.22 ms | max=  10.22 ms
+hand_process_ms          avg=  31.54 ms | med=  30.43 ms | p95=  38.49 ms | min=  26.08 ms | max=  61.86 ms
+live_block_ms            avg=  45.37 ms | med=  43.59 ms | p95=  55.42 ms | min=  36.56 ms | max= 142.37 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2633.61 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.83 ms | med=   3.71 ms | p95=   4.50 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:23:26,176 | --- PERF REPORT @ frame 19800 ---
+face_process_ms          avg=   6.87 ms | med=   6.61 ms | p95=   8.91 ms | min=   5.42 ms | max=  10.60 ms
+hand_process_ms          avg=  31.01 ms | med=  30.62 ms | p95=  36.40 ms | min=  26.21 ms | max=  43.69 ms
+live_block_ms            avg=  44.47 ms | med=  43.44 ms | p95=  51.57 ms | min=  35.72 ms | max= 137.30 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2633.61 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.83 ms | med=   3.71 ms | p95=   4.50 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:23:41,073 | --- PERF REPORT @ frame 20100 ---
+face_process_ms          avg=   6.80 ms | med=   6.60 ms | p95=   8.64 ms | min=   5.15 ms | max=  11.18 ms
+hand_process_ms          avg=  30.52 ms | med=  30.16 ms | p95=  35.71 ms | min=  25.71 ms | max=  41.61 ms
+live_block_ms            avg=  43.78 ms | med=  42.76 ms | p95=  50.20 ms | min=  36.42 ms | max= 163.98 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2633.61 ms | med=2880.20 ms | p95=4359.72 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.83 ms | med=   3.71 ms | p95=   4.50 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:23:53,356 | left_turn -> LEFT: 2639.99 ms
+2026-05-14 13:23:53,359 | LEFT ACK latency: 3.78 ms
+2026-05-14 13:23:54,032 | left_turn -> LEFT: 3316.22 ms
+2026-05-14 13:23:54,036 | LEFT ACK latency: 3.44 ms
+2026-05-14 13:23:54,720 | LEFT ACK latency: 4.12 ms
+2026-05-14 13:23:55,394 | LEFT ACK latency: 4.00 ms
+2026-05-14 13:23:56,093 | left_turn -> LEFT: 580.54 ms
+2026-05-14 13:23:56,097 | LEFT ACK latency: 3.54 ms
+2026-05-14 13:23:56,116 | --- PERF REPORT @ frame 20400 ---
+face_process_ms          avg=   6.74 ms | med=   6.49 ms | p95=   8.94 ms | min=   4.98 ms | max=  11.47 ms
+hand_process_ms          avg=  31.04 ms | med=  30.01 ms | p95=  37.78 ms | min=  25.41 ms | max=  55.32 ms
+live_block_ms            avg=  44.52 ms | med=  42.66 ms | p95=  54.94 ms | min=  36.78 ms | max= 142.45 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2571.61 ms | med=2760.09 ms | p95=4219.58 ms | min= 278.94 ms | max=4366.68 ms
+left_ack_ms              avg=   3.82 ms | med=   3.72 ms | p95=   4.14 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:23:56,767 | LEFT ACK latency: 3.48 ms
+2026-05-14 13:23:57,436 | LEFT ACK latency: 3.56 ms
+2026-05-14 13:23:58,108 | LEFT ACK latency: 3.55 ms
+2026-05-14 13:24:04,209 | left_turn -> LEFT: 2660.87 ms
+2026-05-14 13:24:04,213 | LEFT ACK latency: 3.95 ms
+2026-05-14 13:24:04,877 | left_turn -> LEFT: 3329.09 ms
+2026-05-14 13:24:04,881 | LEFT ACK latency: 3.71 ms
+2026-05-14 13:24:05,557 | left_turn -> LEFT: 4009.31 ms
+2026-05-14 13:24:05,560 | LEFT ACK latency: 3.71 ms
+2026-05-14 13:24:06,230 | left_turn -> LEFT: 4681.89 ms
+2026-05-14 13:24:06,234 | LEFT ACK latency: 3.44 ms
+2026-05-14 13:24:06,906 | LEFT ACK latency: 3.49 ms
+2026-05-14 13:24:07,593 | LEFT ACK latency: 3.52 ms
+2026-05-14 13:24:08,271 | left_turn -> LEFT: 370.29 ms
+2026-05-14 13:24:08,274 | LEFT ACK latency: 3.70 ms
+2026-05-14 13:24:08,949 | left_turn -> LEFT: 1049.42 ms
+2026-05-14 13:24:08,953 | LEFT ACK latency: 3.45 ms
+2026-05-14 13:24:09,629 | LEFT ACK latency: 3.57 ms
+2026-05-14 13:24:10,308 | LEFT ACK latency: 3.33 ms
+2026-05-14 13:24:10,808 | --- PERF REPORT @ frame 20700 ---
+face_process_ms          avg=   6.90 ms | med=   6.76 ms | p95=   8.92 ms | min=   5.07 ms | max=  12.02 ms
+hand_process_ms          avg=  30.55 ms | med=  30.09 ms | p95=  35.46 ms | min=  25.53 ms | max=  40.06 ms
+live_block_ms            avg=  43.55 ms | med=  42.81 ms | p95=  49.98 ms | min=  35.36 ms | max=  61.34 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.09 ms | med=   3.79 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2595.58 ms | med=2770.53 ms | p95=4359.72 ms | min= 278.94 ms | max=4681.89 ms
+left_ack_ms              avg=   3.76 ms | med=   3.68 ms | p95=   4.14 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:24:10,994 | LEFT ACK latency: 3.84 ms
+2026-05-14 13:24:21,190 | RIGHT ACK latency: 4.14 ms
+2026-05-14 13:24:21,858 | RIGHT ACK latency: 4.49 ms
+2026-05-14 13:24:22,529 | RIGHT ACK latency: 4.02 ms
+2026-05-14 13:24:25,397 | --- PERF REPORT @ frame 21000 ---
+face_process_ms          avg=   6.87 ms | med=   6.65 ms | p95=   8.52 ms | min=   5.04 ms | max=  11.05 ms
+hand_process_ms          avg=  30.53 ms | med=  29.91 ms | p95=  35.78 ms | min=  25.66 ms | max=  57.26 ms
+live_block_ms            avg=  43.37 ms | med=  42.59 ms | p95=  50.57 ms | min=  36.87 ms | max=  67.99 ms
+brake_ack_ms             avg=   4.30 ms | med=   4.47 ms | p95=   4.60 ms | min=   3.73 ms | max=   4.72 ms
+tilt_to_cmd_ms           avg=2153.48 ms | med=2153.48 ms | p95= 258.74 ms | min= 258.74 ms | max=4048.22 ms
+right_turn_to_cmd_ms     avg=3367.71 ms | med=3241.38 ms | p95=5278.96 ms | min= 337.67 ms | max=5948.31 ms
+right_ack_ms             avg=   4.10 ms | med=   3.80 ms | p95=   5.40 ms | min=   3.31 ms | max=   6.46 ms
+left_turn_to_cmd_ms      avg=2595.58 ms | med=2770.53 ms | p95=4359.72 ms | min= 278.94 ms | max=4681.89 ms
+left_ack_ms              avg=   3.77 ms | med=   3.70 ms | p95=   4.14 ms | min=   3.28 ms | max=   5.54 ms
+alarm_ack_ms             avg=   3.95 ms | med=   3.95 ms | p95=   3.95 ms | min=   3.95 ms | max=   3.95 ms
+2026-05-14 13:24:27,263 | right_turn -> RIGHT: 2553.50 ms
+2026-05-14 13:24:27,266 | RIGHT ACK latency: 3.70 ms
+2026-05-14 13:24:27,949 | right_turn -> RIGHT: 3240.06 ms
+2026-05-14 13:24:27,953 | RIGHT ACK latency: 3.77 ms
+2026-05-14 13:24:28,630 | right_turn -> RIGHT: 3920.16 ms
+2026-05-14 13:24:28,634 | RIGHT ACK latency: 5.01 ms
+2026-05-14 13:24:29,316 | right_turn -> RIGHT: 4607.05 ms
+2026-05-14 13:24:29,320 | RIGHT ACK latency: 3.92 ms
+2026-05-14 13:24:29,986 | right_turn -> RIGHT: 5276.50 ms
+2026-05-14 13:24:29,989 | RIGHT ACK latency: 3.64 ms
+2026-05-14 13:24:30,660 | right_turn -> RIGHT: 5951.06 ms
+2026-05-14 13:24:30,664 | RIGHT ACK latency: 3.86 ms
+2026-05-14 13:24:31,333 | RIGHT ACK latency: 3.66 ms
+2026-05-14 13:24:32,002 | RIGHT ACK latency: 3.48 ms
+2026-05-14 13:24:32,847 | RIGHT ACK latency: 4.22 ms
+2026-05-14 13:24:33,238 | BRAKE ACK latency: 3.68 ms

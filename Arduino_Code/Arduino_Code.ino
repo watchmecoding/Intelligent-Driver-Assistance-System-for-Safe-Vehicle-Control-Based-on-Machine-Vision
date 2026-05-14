@@ -1,29 +1,37 @@
 // ArduinoCode.ino
 #include <Servo.h>
 
+
 Servo motor;
+
 
 const int SERVO_PIN = 9;
 const int BUZZER_PIN = 8;
+
 
 const int LED_LEFT      = 2;
 const int LED_RIGHT     = 3;
 const int LED_EMERGENCY = 4;
 const int LED_BRAKE     = 5;
 
+
 const int SERVO_STOP = 92;
 const int SERVO_MIN_MOVE = 97;
 const int SERVO_MAX  = 179;   // не 180, щоб не впиратись в упор
 
+
 const int SERVO_STEP  = 2;
 const int SERVO_DELAY = 20;
+
 
 // Захист від перегріву: якщо серво на місці довше N мс — detach
 const unsigned long SERVO_IDLE_TIMEOUT = 3000;
 
+
 String currentCommand    = "STOP";
 int    currentServoSpeed = SERVO_STOP;
 int    targetServoSpeed  = SERVO_STOP;
+
 
 bool          alarmActive   = false;
 unsigned long lastBeepTime  = 0;
@@ -33,8 +41,22 @@ unsigned long servoAtTargetSince = 0;
 bool          servoDetached = false;
 
 
+// Поточні стани виходів для уникнення зайвих дубльованих записів
+bool leftState      = false;
+bool rightState     = false;
+bool emergencyState = false;
+bool brakeState     = false;
+
+
+// Неблокуючий serial buffer
+static char serialBuffer[32];
+static uint8_t serialPos = 0;
+
+
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.setTimeout(10);
 
   motor.attach(SERVO_PIN);
   motor.write(SERVO_STOP);
@@ -55,6 +77,7 @@ void setup() {
 }
 
 
+
 void loop() {
   readSerialCommand();
   updateServo();
@@ -62,11 +85,9 @@ void loop() {
 }
 
 
-void readSerialCommand() {
-  if (!Serial.available()) return;
 
-  String cmd = Serial.readStringUntil('\n');
-  cmd.trim();
+void handleCommand(const String& cmd) {
+  if (cmd.length() == 0) return;
 
   // SPEED:0-100
   if (cmd.startsWith("SPEED:")) {
@@ -79,6 +100,7 @@ void readSerialCommand() {
       targetServoSpeed = map(pct, 1, 100, SERVO_MIN_MOVE, SERVO_MAX);
     }
 
+    currentCommand = cmd;
     servoAtTargetSince = 0;
 
     // Якщо серво було detach — перепідключаємо
@@ -94,26 +116,85 @@ void readSerialCommand() {
   else if (cmd.indexOf(':') != -1) {
     String signal = cmd.substring(0, cmd.indexOf(':'));
     int    state  = cmd.substring(cmd.indexOf(':') + 1).toInt();
+    bool newState = (state == 1);
 
     if (signal == "ALARM") {
-      alarmActive = (state == 1);
+      alarmActive = newState;
       if (!alarmActive) {
         noTone(BUZZER_PIN);
         beepState = false;
       }
     }
-    else if (signal == "LEFT")      digitalWrite(LED_LEFT,      state ? HIGH : LOW);
-    else if (signal == "RIGHT")     digitalWrite(LED_RIGHT,     state ? HIGH : LOW);
-    else if (signal == "EMERGENCY") digitalWrite(LED_EMERGENCY, state ? HIGH : LOW);
-    else if (signal == "BRAKE")     digitalWrite(LED_BRAKE,     state ? HIGH : LOW);
+    else if (signal == "LEFT") {
+      if (leftState != newState) {
+        leftState = newState;
+        digitalWrite(LED_LEFT, leftState ? HIGH : LOW);
+      }
+    }
+    else if (signal == "RIGHT") {
+      if (rightState != newState) {
+        rightState = newState;
+        digitalWrite(LED_RIGHT, rightState ? HIGH : LOW);
+      }
+    }
+    else if (signal == "EMERGENCY") {
+      if (emergencyState != newState) {
+        emergencyState = newState;
+        digitalWrite(LED_EMERGENCY, emergencyState ? HIGH : LOW);
+      }
+    }
+    else if (signal == "BRAKE") {
+      if (brakeState != newState) {
+        brakeState = newState;
+        digitalWrite(LED_BRAKE, brakeState ? HIGH : LOW);
+      }
+    }
 
+    currentCommand = cmd;
     Serial.print("OK: ");
     Serial.println(cmd);
   }
   // Старі текстові команди (fallback)
-  else if (cmd == "STOP") { targetServoSpeed = SERVO_STOP; Serial.println("OK: STOP"); }
-  else if (cmd == "FULL") { targetServoSpeed = SERVO_MAX;  Serial.println("OK: FULL"); }
+  else if (cmd == "STOP") {
+    currentCommand = cmd;
+    targetServoSpeed = SERVO_STOP;
+    Serial.println("OK: STOP");
+  }
+  else if (cmd == "FULL") {
+    currentCommand = cmd;
+    targetServoSpeed = SERVO_MAX;
+    Serial.println("OK: FULL");
+  }
 }
+
+
+
+void readSerialCommand() {
+  while (Serial.available() > 0) {
+    char c = (char)Serial.read();
+
+    if (c == '\r') {
+      continue;
+    }
+
+    if (c == '\n') {
+      serialBuffer[serialPos] = '\0';
+      String cmd = String(serialBuffer);
+      cmd.trim();
+      serialPos = 0;
+      handleCommand(cmd);
+      continue;
+    }
+
+    if (serialPos < sizeof(serialBuffer) - 1) {
+      serialBuffer[serialPos++] = c;
+    } else {
+      // overflow protection: скидаємо буфер
+      serialPos = 0;
+    }
+  }
+}
+
 
 
 void updateServo() {
@@ -152,6 +233,7 @@ void updateServo() {
 }
 
 
+
 void updateAlarm() {
   if (!alarmActive) return;
 
@@ -164,13 +246,16 @@ void updateAlarm() {
 }
 
 
+
 // // Тест гучності пасивного динаміка
 // const int BUZZER_PIN = 8;
+
 
 // void setup() {
 //     Serial.begin(9600);
 //     Serial.println("Надсилай частоту (напр. 2500)");
 // }
+
 
 // void loop() {
 //     if (Serial.available()) {

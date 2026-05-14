@@ -18,17 +18,20 @@ from db_logger import DatabaseLogger
 from streaming_client import StreamingClient
 from settings_manager import SettingsManager
 from settings_window import SettingsWindow
+from perf_monitor import PerfMonitor
 from collections import deque
 
 class IntelligentDriverAssistanceSystem:
     def __init__(self):
 
-        self.log_file = open("events_log.txt", "a", encoding="utf-8")
-
+        self.log_file = open("logs/events_log.log", "a", encoding="utf-8")
+        self.perf          = PerfMonitor(report_every=300)
+        self._last_event_times = {}
         self.db            = DatabaseLogger()
         self.face_detector = FaceDetector()
         self.hand_detector = HandDetector()
         self.arduino       = ArduinoController(log_callback=self.log_event)
+        self.arduino.command_sent_callback = self._on_arduino_command_sent
         self.vehicle       = VehicleController(self.arduino)
 
         self.settings = SettingsManager()
@@ -87,8 +90,6 @@ class IntelligentDriverAssistanceSystem:
         threading.Thread(target=self._processing_loop, daemon=True).start()
 
     def _processing_loop(self):
-        fps_buffer = deque(maxlen=30)
-        prev_time = time.time()
         while self._running:
             success, frame = self.cap.read()
             if not success or frame is None:
@@ -96,21 +97,21 @@ class IntelligentDriverAssistanceSystem:
                 continue
 
             frame = cv2.flip(frame, 1)
-            curr_time = time.time()
-            dt = curr_time - prev_time
-            if dt > 0:
-                fps_buffer.append(1.0 / dt)
-            prev_time = curr_time
-            fps = sum(fps_buffer) / len(fps_buffer) if fps_buffer else 0.0
-            
             self.frame_count += 1
-            if self.frame_count % 300 == 0:
-                print(f"FPS: {fps:.1f} | Frames: {self.frame_count}")
             
             if self.is_live:
+                t_live = self.perf.tic()
+
                 frame_rgb    = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                t_face = self.perf.tic()
                 face_results = self.face_detector.process(frame_rgb)
+                self.perf.add("face_process_ms", self.perf.toc_ms(t_face))
+
+                t_hand = self.perf.tic()
                 hand_results = self.hand_detector.process(frame_rgb)
+                self.perf.add("hand_process_ms", self.perf.toc_ms(t_hand))
+
                 h, w, _      = frame.shape
                 current_time = time.time()
 
@@ -123,6 +124,7 @@ class IntelligentDriverAssistanceSystem:
                     self._last_face_detected     = True
                     self.face_missing_start_time = None
                     self._face_missing_counted   = False
+                    self.perf.clear_event_start("face_missing")
 
                     for lm in face_results.multi_face_landmarks:
                         metrics = self.face_detector.get_metrics(lm.landmark, w, h)
@@ -138,6 +140,10 @@ class IntelligentDriverAssistanceSystem:
 
                         # Сонливість
                         drowsy_state, elapsed = self.vehicle.check_drowsiness(ear, current_time)
+                        if drowsy_state in ("drowsy", "emergency"):
+                            self.perf.mark_event_start("drowsy")
+                        else:
+                            self.perf.clear_event_start("drowsy")
                         if self.vehicle.emergency_stop_active:
                             self.last_brake_countdown = round(max(0.0, self.settings.emergency_brake_dur - (current_time - self.vehicle.emergency_start_time)), 1)
                         else:
@@ -189,10 +195,24 @@ class IntelligentDriverAssistanceSystem:
 
                         # Нахил голови
                         tilt_state, tilt_elapsed, tilt_dir = self.vehicle.check_head_tilt(pitch, current_time)
+                        if tilt_state in ("tilt_warning", "tilt_emergency"):
+                            self.perf.mark_event_start("tilt")
+                        else:
+                            self.perf.clear_event_start("tilt")
+
                         self._last_tilt_time = tilt_elapsed if tilt_state in ("tilt_warning", "tilt_emergency") else 0.0
 
                         # Поворот голови
                         head_state, head_elapsed = self.vehicle.update_head_position(yaw, current_time)
+                        if head_state in ("left_waiting", "left_on"):
+                            self.perf.mark_event_start("left_turn")
+                        else:
+                            self.perf.clear_event_start("left_turn")
+
+                        if head_state in ("right_waiting", "right_on"):
+                            self.perf.mark_event_start("right_turn")
+                        else:
+                            self.perf.clear_event_start("right_turn")
                         self.last_turn_signal_time  = head_elapsed if head_state in ('left_waiting', 'right_waiting') else 0.0
                         self.last_forward_gaze_time = head_elapsed if head_state == 'straight_waiting' else 0.0
 
@@ -298,8 +318,6 @@ class IntelligentDriverAssistanceSystem:
                             self.window.after(0, lambda: self.ui.warning_label.config(text="Немає попереджень", fg=SUCCESS_COLOR))
                         self.window.after(0, self._update_yawn_limit_label)
 
-                    self.frame_count += 1
-
                     if self.vehicle.emergency_stop_active:
                         smoothed = self.vehicle.set_speed(0)
                         _sm = smoothed
@@ -382,6 +400,7 @@ class IntelligentDriverAssistanceSystem:
                     self._head_down_logged     = False
                     self._last_eye_closed_time = 0.0
                     self._last_tilt_time       = 0.0
+                    self.perf.mark_event_start("face_missing")
 
                     if self.vehicle.emergency_stop_active:
                         self.last_brake_countdown = round(
@@ -441,6 +460,7 @@ class IntelligentDriverAssistanceSystem:
                     self._prev_brake = brake_active
 
                 frame = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
+                self.perf.add("live_block_ms", self.perf.toc_ms(t_live))
 
             # Підготовка кадру для відображення
             frame_rgb_out = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -461,6 +481,35 @@ class IntelligentDriverAssistanceSystem:
                 try: self._stream_queue.put_nowait(frame_resized.copy())
                 except queue.Full: pass
 
+            self.perf.next_frame()
+
+    def _on_arduino_command_sent(self, command):
+        if command == "LEFT:1":
+            self.perf.mark_command_sent("LEFT", event_name="left_turn")
+
+        elif command == "RIGHT:1":
+            self.perf.mark_command_sent("RIGHT", event_name="right_turn")
+
+        elif command == "BRAKE:1":
+            if self.face_missing_start_time is not None and not self._last_face_detected:
+                self.perf.mark_command_sent("BRAKE", event_name="face_missing")
+            elif self.vehicle.tilt_down_start_time is not None or self.vehicle.tilt_up_start_time is not None:
+                self.perf.mark_command_sent("BRAKE", event_name="tilt")
+            elif self.vehicle.eye_closed_start_time is not None:
+                self.perf.mark_command_sent("BRAKE", event_name="drowsy")
+            else:
+                self.perf.mark_command_sent("BRAKE")
+
+        elif command == "ALARM:1":
+            if self.face_missing_start_time is not None and not self._last_face_detected:
+                self.perf.mark_command_sent("ALARM", event_name="face_missing")
+            elif self.vehicle.tilt_down_start_time is not None or self.vehicle.tilt_up_start_time is not None:
+                self.perf.mark_command_sent("ALARM", event_name="tilt")
+            elif self.vehicle.eye_closed_start_time is not None:
+                self.perf.mark_command_sent("ALARM", event_name="drowsy")
+            else:
+                self.perf.mark_command_sent("ALARM")
+
     def _update_display(self):
         try:
             frame_rgb = self._display_queue.get_nowait()
@@ -479,9 +528,48 @@ class IntelligentDriverAssistanceSystem:
         threading.Thread(target=_do, daemon=True).start()
 
     def log_event(self, message):
+        now = time.time()
+
+        cooldown = 2.0
+        if message.startswith("SERIAL:OK:"):
+            cooldown = 0.0
+        elif "Автоповоротник" in message:
+            cooldown = 2.0
+        elif "Обличчя зникло" in message:
+            cooldown = 5.0
+        elif "Аварійку вимкнено жестом peace" in message:
+            cooldown = 3.0
+        elif "WriteFile failed" in message:
+            cooldown = 10.0
+        elif "Arduino підключено" in message or "Arduino не знайдено" in message:
+            cooldown = 15.0
+
+        last_t = self._last_event_times.get(message, 0.0)
+        if cooldown > 0 and (now - last_t) < cooldown:
+            return
+
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.log_file.write(f"[{ts}] {message}\n")
         self.log_file.flush()
+        self._last_event_times[message] = now
+
+        if message.startswith("SERIAL:OK:"):
+            cmd = message.split("SERIAL:OK:", 1)[1].strip()
+
+            if cmd.startswith("SPEED:"):
+                self.perf.mark_ack("SPEED")
+            elif cmd.startswith("LEFT:"):
+                self.perf.mark_ack("LEFT")
+            elif cmd.startswith("RIGHT:"):
+                self.perf.mark_ack("RIGHT")
+            elif cmd.startswith("BRAKE:"):
+                self.perf.mark_ack("BRAKE")
+            elif cmd.startswith("EMERGENCY:"):
+                self.perf.mark_ack("EMERGENCY")
+            elif cmd.startswith("ALARM:"):
+                self.perf.mark_ack("ALARM")
+            elif cmd == "STOP":
+                self.perf.mark_ack("STOP")
 
     def _update_yawn_limit_label(self):
         if not self.settings.enable_yawns:
