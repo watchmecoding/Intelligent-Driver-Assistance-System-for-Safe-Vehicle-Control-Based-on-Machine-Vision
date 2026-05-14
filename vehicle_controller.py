@@ -135,14 +135,14 @@ class VehicleController:
             if self.tilt_down_start_time is None:
                 self.tilt_down_start_time = current_time
             elapsed   = current_time - self.tilt_down_start_time
-            direction = "вниз"
+            direction = "вгору"
 
         elif going_up:
             self.tilt_down_start_time = None
             if self.tilt_up_start_time is None:
                 self.tilt_up_start_time = current_time
             elapsed   = current_time - self.tilt_up_start_time
-            direction = "вгору"
+            direction = "вниз"
 
         else:
             self.tilt_down_start_time = None
