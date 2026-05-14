@@ -70,12 +70,13 @@ class FaceDetector:
                                         flags=cv2.SOLVEPNP_ITERATIVE)
             if not ok:
                 return self._prev_pitch, self._prev_yaw
+            
             R, _ = cv2.Rodrigues(rvec)
             sy = np.sqrt(R[0,0]**2 + R[1,0]**2)
             pitch = np.arctan2(R[2,1], R[2,2]) if sy > 1e-6 else np.arctan2(-R[1,2], R[1,1])
             yaw   = np.arctan2(-R[2,0], sy)
-            pitch_deg = -float(np.degrees(pitch))
-            yaw_deg   =  float(np.degrees(yaw))
+            pitch_deg = float(np.degrees(pitch))
+            yaw_deg   = -float(np.degrees(yaw))
             # Згладжування:
             pitch_deg = self._prev_pitch * 0.5 + pitch_deg * 0.5
             yaw_deg   = self._prev_yaw   * 0.5 + yaw_deg   * 0.5
