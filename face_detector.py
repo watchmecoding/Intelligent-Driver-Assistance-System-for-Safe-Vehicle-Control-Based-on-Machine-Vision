@@ -55,52 +55,43 @@ class FaceDetector:
         except Exception:
             return 0.0
 
-    def estimate_head_yaw(self, landmarks, w, h):
+    def estimateheadpose(self, landmarks, w, h):
         try:
-            nose_x      = landmarks[1].x
-            left_eye_x  = landmarks[33].x
-            right_eye_x = landmarks[263].x
-            center_x    = (left_eye_x + right_eye_x) / 2.0
-            deviation   = (nose_x - center_x) * 100.0
-            return float(np.clip(deviation * 3, -60, 60))
-        except Exception:
-            return 0.0
-
-    def estimate_head_pitch(self, landmarks, w, h):
-        try:
-            img_pts = np.array(
-                [(landmarks[i].x * w, landmarks[i].y * h) for i in _MODEL_LM],
-                dtype=np.float64)
+            imgpts = np.array(
+                [[landmarks[i].x * w, landmarks[i].y * h] for i in _MODEL_LM],
+                dtype=np.float64
+            )
             focal = float(w)
-            cam   = np.array([[focal, 0, w / 2.0],
-                               [0, focal, h / 2.0],
-                               [0, 0,     1.0    ]], dtype=np.float64)
-            dist  = np.zeros((4, 1), dtype=np.float64)
-            ok, rvec, _ = cv2.solvePnP(
-                _MODEL_3D, img_pts, cam, dist,
-                flags=cv2.SOLVEPNP_ITERATIVE)
+            cam = np.array([[focal, 0, w/2.0],
+                            [0, focal, h/2.0],
+                            [0, 0, 1.0]], dtype=np.float64)
+            dist = np.zeros((4, 1), dtype=np.float64)
+            ok, rvec, _ = cv2.solvePnP(_MODEL_3D, imgpts, cam, dist,
+                                        flags=cv2.SOLVEPNP_ITERATIVE)
             if not ok:
-                return self._prev_pitch
+                return self._prev_pitch, self._prev_yaw
             R, _ = cv2.Rodrigues(rvec)
-            sy = np.sqrt(R[0, 0] ** 2 + R[1, 0] ** 2)
-            pitch = (np.arctan2(R[2, 1], R[2, 2])
-                     if sy > 1e-6
-                     else np.arctan2(-R[1, 2], R[1, 1]))
+            sy = np.sqrt(R[0,0]**2 + R[1,0]**2)
+            pitch = np.arctan2(R[2,1], R[2,2]) if sy > 1e-6 else np.arctan2(-R[1,2], R[1,1])
+            yaw   = np.arctan2(-R[2,0], sy)
             pitch_deg = -float(np.degrees(pitch))
-            pitch_deg = 0.5 * pitch_deg + 0.5 * self._prev_pitch
+            yaw_deg   =  float(np.degrees(yaw))
+            # Згладжування:
+            pitch_deg = self._prev_pitch * 0.5 + pitch_deg * 0.5
+            yaw_deg   = self._prev_yaw   * 0.5 + yaw_deg   * 0.5
             self._prev_pitch = pitch_deg
-            return pitch_deg
+            self._prev_yaw   = yaw_deg
+            return pitch_deg, yaw_deg
         except Exception:
-            return self._prev_pitch
+            return self._prev_pitch, self._prev_yaw
 
     def get_metrics(self, landmarks, w, h):
         s = self.settings
 
         left_ear  = self.calculate_EAR(landmarks, LEFT_EYE_IDX,  w, h)
         right_ear = self.calculate_EAR(landmarks, RIGHT_EYE_IDX, w, h)
-        yaw       = self.estimate_head_yaw(landmarks, w, h)
-        pitch     = self.estimate_head_pitch(landmarks, w, h)
-        
+        pitch, yaw = self.estimateheadpose(landmarks, w, h)
+
         # Вибір найближчого ока при повороті
         angle_left  = s.head_turn_angle_left
         angle_right = s.head_turn_angle_right

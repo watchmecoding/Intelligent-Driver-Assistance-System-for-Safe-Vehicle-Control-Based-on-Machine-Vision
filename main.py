@@ -18,7 +18,7 @@ from db_logger import DatabaseLogger
 from streaming_client import StreamingClient
 from settings_manager import SettingsManager
 from settings_window import SettingsWindow
-
+from collections import deque
 
 class IntelligentDriverAssistanceSystem:
     def __init__(self):
@@ -87,6 +87,8 @@ class IntelligentDriverAssistanceSystem:
         threading.Thread(target=self._processing_loop, daemon=True).start()
 
     def _processing_loop(self):
+        fps_buffer = deque(maxlen=30)
+        prev_time = time.time()
         while self._running:
             success, frame = self.cap.read()
             if not success or frame is None:
@@ -94,7 +96,17 @@ class IntelligentDriverAssistanceSystem:
                 continue
 
             frame = cv2.flip(frame, 1)
-
+            curr_time = time.time()
+            dt = curr_time - prev_time
+            if dt > 0:
+                fps_buffer.append(1.0 / dt)
+            prev_time = curr_time
+            fps = sum(fps_buffer) / len(fps_buffer) if fps_buffer else 0.0
+            
+            self.frame_count += 1
+            if self.frame_count % 300 == 0:
+                print(f"FPS: {fps:.1f} | Frames: {self.frame_count}")
+            
             if self.is_live:
                 frame_rgb    = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 face_results = self.face_detector.process(frame_rgb)

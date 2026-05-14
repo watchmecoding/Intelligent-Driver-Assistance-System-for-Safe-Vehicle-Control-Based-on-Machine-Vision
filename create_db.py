@@ -1,10 +1,9 @@
 # create_db.py
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from config import DBHOST, DBPORT, DBNAME, DBUSER, DBPASSWORD
 
-conn = psycopg2.connect(
-    host="localhost", port=5432,
-    database="postgres", user="postgres", password="123")
+conn = psycopg2.connect(host=DBHOST, port=DBPORT, database="postgres", user=DBUSER, password=DBPASSWORD)
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cur = conn.cursor()
 try:
@@ -15,9 +14,7 @@ except Exception as e:
 cur.close()
 conn.close()
 
-conn = psycopg2.connect(
-    host="localhost", port=5432,
-    database="driver_assistance_system_db", user="postgres", password="123")
+conn = psycopg2.connect(host=DBHOST, port=DBPORT, database=DBNAME, user=DBUSER, password=DBPASSWORD)
 cur = conn.cursor()
 
 # Водії
