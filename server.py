@@ -15,6 +15,8 @@ flask.cli.show_server_banner = lambda *args: None
 
 def setup_server_logger(log_path="logs/dashboard_server.log"):
     logger = logging.getLogger("dashboard_server")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
 
     if not logger.handlers:
         fh = logging.FileHandler(log_path, mode="a", encoding="utf-8")
@@ -28,8 +30,9 @@ def setup_server_logger(log_path="logs/dashboard_server.log"):
 server_logger = setup_server_logger()
 
 app = Flask(__name__)
-app.logger.disabled = True
+# app.logger.disabled = True
 logging.getLogger("werkzeug").disabled = True
+# logging.getLogger("werkzeug")
 
 _lock = threading.Lock()
 _frame = None

@@ -62,6 +62,8 @@ class IntelligentDriverAssistanceSystem:
 
         self.face_missing_start_time = None
         self._face_missing_counted   = False
+        self._face_missing_last_count_time = 0.0
+        self._face_missing_cooldown = FACE_MISSING_COOLDOWN
         self._yawn_emergency_counted = False
 
         # Метрики для стріму
@@ -91,6 +93,7 @@ class IntelligentDriverAssistanceSystem:
 
     def _processing_loop(self):
         while self._running:
+            t_live = self.perf.tic()
             success, frame = self.cap.read()
             if not success or frame is None:
                 time.sleep(0.01)
@@ -100,7 +103,6 @@ class IntelligentDriverAssistanceSystem:
             self.frame_count += 1
             
             if self.is_live:
-                t_live = self.perf.tic()
 
                 frame_rgb    = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -123,7 +125,8 @@ class IntelligentDriverAssistanceSystem:
                 if face_results.multi_face_landmarks:
                     self._last_face_detected     = True
                     self.face_missing_start_time = None
-                    self._face_missing_counted   = False
+                    if (current_time - self._face_missing_last_count_time) > self._face_missing_cooldown:
+                        self._face_missing_counted = False
                     self.perf.clear_event_start("face_missing")
 
                     for lm in face_results.multi_face_landmarks:
@@ -215,14 +218,15 @@ class IntelligentDriverAssistanceSystem:
                             self.perf.clear_event_start("right_turn")
                         self.last_turn_signal_time  = head_elapsed if head_state in ('left_waiting', 'right_waiting') else 0.0
                         self.last_forward_gaze_time = head_elapsed if head_state == 'straight_waiting' else 0.0
-
+                        
+                        # НАХИЛ ГОЛОВИ
                         if tilt_state == "tilt_emergency":
                             brake_progress = min((current_time - self.vehicle.emergency_start_time) / self.settings.emergency_brake_dur, 1.0)
                             remaining_sec  = max(0.0, self.settings.emergency_brake_dur - (current_time - self.vehicle.emergency_start_time))
-                            _bp, _rs, _td, _p = brake_progress, remaining_sec, tilt_dir, pitch
-                            self.window.after(0, lambda bp=_bp, rs=_rs, td=_td, p=_p: (
+                            _bp, _rs, _td, _p, _el = brake_progress, remaining_sec, tilt_dir, pitch, tilt_elapsed
+                            self.window.after(0, lambda bp=_bp, rs=_rs, td=_td, p=_p, el=_el: (
                                 self.ui.head_status_label.config(
-                                    text=f"⚠ Голова {td}! ({abs(p):.0f}°) — АВАРІЙНА ЗУПИНКА",
+                                    text=f"Голова {td} ({abs(p):.0f}°) — {el:.1f}с",   
                                     fg=DANGER_COLOR),
                                 self.ui.warning_label.config(
                                     text=f"НАХИЛ ГОЛОВИ {td.upper()} ({abs(p):.0f}°)\nГальмування: {int(bp*100)}% ({rs:.1f}с)",
@@ -235,39 +239,61 @@ class IntelligentDriverAssistanceSystem:
 
                         elif tilt_state == "tilt_warning":
                             _rem = self.settings.tilt_time - tilt_elapsed
-                            _td, _p = tilt_dir, pitch
-                            self.window.after(0, lambda td=_td, p=_p, rem=_rem: (
+                            _td, _p, _el = tilt_dir, pitch, tilt_elapsed
+                            self.window.after(0, lambda td=_td, p=_p, rem=_rem, el=_el: (
                                 self.ui.head_status_label.config(
-                                    text=f"Нахил {td} ({abs(p):.0f}°) — аварійна зупинка через {rem:.1f}с",
-                                    fg=WARNING_COLOR),
+                                    text=f"Нахил {td} ({abs(p):.0f}°) — {el:.1f}с",   
+                                    fg=TEXT_COLOR),
                                 self.ui.warning_label.config(
-                                    text=f"Нахил голови {td} ({abs(p):.0f}°)\nАварійна зупинка через {rem:.1f}с",
+                                    text=f"Нахил голови {td} ({abs(p):.0f}°)\nАварійна зупинка через {rem:.1f}с", 
                                     fg=WARNING_COLOR)
                             ))
                             self._head_down_logged = False
 
                         else:
                             self._head_down_logged = False
-                            _hs, _he, _y, _p = head_state, head_elapsed, yaw, pitch
+                            _hs, _he, _y = head_state, head_elapsed, yaw
+                            _rem_turn = max(0.0, self.settings.head_turn_time - head_elapsed)
+                            _rem_off  = max(0.0, self.settings.head_turn_off_time - head_elapsed)
 
-                            def _update_head_ui(hs=_hs, he=_he, y=_y):
+                            def _update_head_ui(hs=_hs, he=_he, y=_y, rem=_rem_turn, rem_off=_rem_off):
                                 if hs == "left_on":
-                                    self.ui.head_status_label.config(text=f"Напрямок: ВЛІВО ({abs(y):.0f}°) — Поворотник ВКЛ", fg=WARNING_COLOR)
+                                    self.ui.head_status_label.config(
+                                        text=f"Поворот ВЛІВО ({abs(y):.0f}°) — Поворотник ВКЛ",
+                                        fg=WARNING_COLOR)
                                     self.log_event("Автоповоротник ВЛІВО")
                                 elif hs == "left_waiting":
-                                    self.ui.head_status_label.config(text=f"Напрямок: Вліво ({abs(y):.0f}°) [{he:.1f}с]", fg=TEXT_COLOR)
+                                    self.ui.head_status_label.config(
+                                        text=f"Поворот вліво ({abs(y):.0f}°) — {he:.1f}с", 
+                                        fg=TEXT_COLOR)
+                                    self.ui.warning_label.config(
+                                        text=f"Поворот вліво ({abs(y):.0f}°)\nЛівий поворотник через {rem:.1f}с",  
+                                        fg=WARNING_COLOR)
                                 elif hs == "right_on":
-                                    self.ui.head_status_label.config(text=f"Напрямок: ВПРАВО ({y:.0f}°) — Поворотник ВКЛ", fg=WARNING_COLOR)
+                                    self.ui.head_status_label.config(
+                                        text=f"Поворот ВПРАВО ({y:.0f}°) — Поворотник ВКЛ",
+                                        fg=WARNING_COLOR)
                                     self.log_event("Автоповоротник ВПРАВО")
                                 elif hs == "right_waiting":
-                                    self.ui.head_status_label.config(text=f"Напрямок: Вправо ({y:.0f}°) [{he:.1f}с]", fg=TEXT_COLOR)
+                                    self.ui.head_status_label.config(
+                                        text=f"Поворот вправо ({y:.0f}°) — {he:.1f}с",       
+                                        fg=TEXT_COLOR)
+                                    self.ui.warning_label.config(
+                                        text=f"Поворот вправо ({y:.0f}°)\nПравий поворотник через {rem:.1f}с",    
+                                        fg=WARNING_COLOR)
                                 elif hs == "straight_off":
-                                    self.ui.head_status_label.config(text="Напрямок: Прямо", fg=SUCCESS_COLOR)
+                                    self.ui.head_status_label.config(text="Напрямок: Прямо (Автоповоротники вимкнено)", fg=SUCCESS_COLOR)
                                     self.log_event("Автоповоротники вимкнено")
                                 elif hs == "straight_waiting":
-                                    self.ui.head_status_label.config(text=f"Напрямок: Прямо [{he:.1f}с] — Вимкнення...", fg=TEXT_COLOR)
+                                    self.ui.head_status_label.config(
+                                        text=f"Напрямок: Прямо [{he:.1f}с] — Вимкнення сигналу повороту",
+                                        fg=TEXT_COLOR)
+                                    self.ui.warning_label.config(
+                                        text=f"Поворотник вимкнеться через {rem_off:.1f}с",
+                                        fg=TEXT_COLOR)
                                 else:
                                     self.ui.head_status_label.config(text="Напрямок: Прямо", fg=SUCCESS_COLOR)
+
                             self.window.after(0, _update_head_ui)
 
                             peace_remaining = self.settings.peace_cooldown - (current_time - self.vehicle.last_peace_time)
@@ -309,6 +335,8 @@ class IntelligentDriverAssistanceSystem:
                         if drowsy_state == "drowsy":
                             pass
                         elif tilt_state in ("tilt_warning", "tilt_emergency"):
+                            pass
+                        elif head_state in ("left_waiting", "right_waiting", "straight_waiting"):
                             pass
                         elif self.settings.enable_yawns and self.vehicle.consecutive_yawns > 0 and remaining_yawns <= 2:
                             pass
@@ -411,8 +439,9 @@ class IntelligentDriverAssistanceSystem:
                     if self.face_missing_start_time is None:
                         self.face_missing_start_time = current_time
 
-                    if not self._face_missing_counted:
+                    if not self._face_missing_counted and (current_time - self._face_missing_last_count_time) > FACE_MISSING_COOLDOWN:
                         self._face_missing_counted = True
+                        self._face_missing_last_count_time = current_time
                         self._face_missing_count  += 1
                         _fmc = self._face_missing_count
                         self.window.after(0, lambda c=_fmc: self.ui.face_missing_count_label.config(
@@ -460,7 +489,6 @@ class IntelligentDriverAssistanceSystem:
                     self._prev_brake = brake_active
 
                 frame = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
-                self.perf.add("live_block_ms", self.perf.toc_ms(t_live))
 
             # Підготовка кадру для відображення
             frame_rgb_out = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -481,6 +509,7 @@ class IntelligentDriverAssistanceSystem:
                 try: self._stream_queue.put_nowait(frame_resized.copy())
                 except queue.Full: pass
 
+            self.perf.add("live_block_ms", self.perf.toc_ms(t_live))
             self.perf.next_frame()
 
     def _on_arduino_command_sent(self, command):
@@ -572,12 +601,13 @@ class IntelligentDriverAssistanceSystem:
                 self.perf.mark_ack("STOP")
 
     def _update_yawn_limit_label(self):
-        if not self.settings.enable_yawns:
-            self.ui.yawn_limit_label.config(text="Контроль позіхань вимкнено", fg=TEXT_COLOR)
+        if self.settings.enable_yawns:
             self.ui.yawn_limit_label.config(
-                text=f"Ліміт: {self.vehicle.max_allowed_yawns} позіхань", fg=WARNING_COLOR)
+                text=f"Ліміт: {self.vehicle.max_allowed_yawns} позіхань",
+                fg=WARNING_COLOR)
         else:
-            self.ui.yawn_limit_label.config(text="Обмеження: НЕМАЄ", fg=SUCCESS_COLOR)
+            self.ui.yawn_limit_label.config(
+                text="Обмеження: НЕМАЄ", fg=SUCCESS_COLOR)
 
     def _increment_emergency(self):
         if self.vehicle.emergency_stop_active and not self._emergency_counted:
@@ -586,6 +616,55 @@ class IntelligentDriverAssistanceSystem:
             _ec = self._emergency_count
             self.window.after(0, lambda c=_ec: self.ui.emergency_count_label.config(
                 text=f"Аварійних зупинок: {c}", fg=DANGER_COLOR))
+
+    def _reset_after_stop(self):
+
+        self.vehicle.reset_state()
+        self.vehicle.reset_all_yawn_counters()
+
+        self.frame_count             = 0
+        self._prev_brake             = None
+        self.face_missing_start_time = None
+        self._face_missing_counted   = False
+        self._head_down_logged       = False
+        self._emergency_counted      = False
+        self._emergency_count        = 0
+        self._face_missing_count     = 0
+        self._yawn_emergency_counted = False
+
+        self._last_ear                     = 0.0
+        self._last_mar                     = 0.0
+        self._last_yaw                     = 0.0
+        self._last_pitch                   = 0.0
+        self._last_eye_closed_time         = 0.0
+        self._last_tilt_time               = 0.0
+        self.last_turn_signal_time         = 0.0 
+        self.last_forward_gaze_time        = 0.0
+        self.last_brake_countdown          = 0.0
+        self._face_missing_last_count_time = 0.0
+
+        self.vehicle.speed_buffer.clear()
+        self.vehicle.set_speed(0, force_stop=True)
+        self.ui.update_speed_display(0, self.settings.max_speed_kmh)
+
+        self.arduino.send_signal("LEFT",      0)
+        self.arduino.send_signal("RIGHT",     0)
+        self.arduino.send_signal("EMERGENCY", 0)
+        self.arduino.send_signal("BRAKE",     0)
+        self.arduino.send_alarm(False)
+        self._prev_brake = None
+
+        self.ui.update_speed_display(0, self.settings.max_speed_kmh)
+        self.ui.update_signals(False, False, False, False)
+        self.ui.warning_label.config(text="Немає попереджень", fg=SUCCESS_COLOR)
+        self.ui.head_status_label.config(text="Напрямок: Не визначено", fg=TEXT_COLOR)
+        self.ui.gesture_label.config(text="Жест руки: Не визначено", fg=TEXT_COLOR)
+        self.ui.emergency_count_label.config(text="Аварійних зупинок: 0", fg=TEXT_COLOR)
+        self.ui.face_missing_count_label.config(text="Зникнень обличчя: 0", fg=TEXT_COLOR)
+        self.ui.yawn_label.config(text="Позіхань: 0")
+        self.ui.yawn_limit_label.config(text="Обмеження: НЕМАЄ", fg=SUCCESS_COLOR)
+        self.ui.status_label.config(text="Систему призупинено", fg=WARNING_COLOR)
+        self._push_stopped_state()
 
     def toggle_live(self):
         if self.is_live:
@@ -599,50 +678,7 @@ class IntelligentDriverAssistanceSystem:
                 emergency_count=self._emergency_count,
                 face_missing_count=self._face_missing_count)
             self._push_sessions()
-            self.vehicle.reset_all_yawn_counters()
-
-            self.frame_count             = 0
-            self._prev_brake             = None
-            self.face_missing_start_time = None
-            self._face_missing_counted   = False
-            self._head_down_logged       = False
-            self._emergency_counted      = False
-            self._emergency_count        = 0
-            self._face_missing_count     = 0
-            self._yawn_emergency_counted = False
-
-            self._last_ear             = 0.0
-            self._last_mar             = 0.0
-            self._last_yaw             = 0.0
-            self._last_pitch           = 0.0
-            self._last_eye_closed_time = 0.0
-            self._last_tilt_time       = 0.0
-
-            self.ui.emergency_count_label.config(text="Аварійних зупинок: 0", fg=TEXT_COLOR)
-            self.ui.face_missing_count_label.config(text="Зникнень обличчя: 0", fg=TEXT_COLOR)
-            self.ui.yawn_label.config(text="Позіхань: 0")
-            self.ui.yawn_limit_label.config(text="Обмеження: НЕМАЄ", fg=SUCCESS_COLOR)
-
-            self.vehicle.speed_buffer.clear()
-            self.vehicle.set_speed(0, force_stop=True)
-            self.ui.update_speed_display(0, self.settings.max_speed_kmh)
-
-            self.vehicle.left_turn_signal      = False
-            self.vehicle.right_turn_signal     = False
-            self.vehicle.emergency_signal      = False
-            self.vehicle.emergency_stop_active = False
-            self.arduino.send_signal("LEFT",      0)
-            self.arduino.send_signal("RIGHT",     0)
-            self.arduino.send_signal("EMERGENCY", 0)
-            self.arduino.send_signal("BRAKE",     0)
-            self.arduino.send_alarm(False)
-            self._prev_brake = None
-
-            self.ui.update_signals(False, False, False, False)
-            self.ui.warning_label.config(text="Немає попереджень", fg=SUCCESS_COLOR)
-            self.ui.head_status_label.config(text="Напрямок: Не визначено", fg=TEXT_COLOR)
-            self.ui.gesture_label.config(text="Розведіть пальці для руху", fg=TEXT_COLOR)
-            self._push_stopped_state()
+            self.window.after(150, self._reset_after_stop)
         else:
             self.is_live = True
             self.ui.start_button_text.set("Зупинити")

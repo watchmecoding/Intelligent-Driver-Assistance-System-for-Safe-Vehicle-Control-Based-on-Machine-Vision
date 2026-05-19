@@ -262,3 +262,33 @@ class VehicleController:
 
         self.prev_speed = self.manual_speed
         return result
+
+    def reset_state(self):
+        # Аварійка
+        self.emergency_stop_active  = False
+        self.emergency_signal       = False
+        self.emergency_start_time   = 0.0
+        self.emergency_start_speed  = 0.0
+        self.force_stop_requested   = False
+
+        # Сигнали повороту
+        self.left_turn_signal       = False
+        self.right_turn_signal      = False
+
+        # Таймери детекторів
+        self.eye_closed_start_time  = None
+        self.tilt_down_start_time   = None
+        self.tilt_up_start_time     = None
+        self.head_turn_left_start   = None
+        self.head_turn_right_start  = None
+        self.head_straight_start    = None
+
+        # Швидкість
+        self.manual_speed           = 0.0
+        self.prev_speed             = 0.0
+        self.brake_cooldown         = 0
+        self.speed_buffer.clear()
+
+        # Позіхання (лічильники сесії скидає reset_all_yawn_counters окремо)
+        self.yawn_frame_count       = 0
+        self.is_yawning             = False

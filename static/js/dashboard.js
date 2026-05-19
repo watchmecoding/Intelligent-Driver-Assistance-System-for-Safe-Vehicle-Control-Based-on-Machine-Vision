@@ -47,7 +47,7 @@ function buildTable(s, m) {
     const spKmh = m.speed != null ? Math.round(m.speed / 100 * s.max_speed_kmh) : null;
     const spPct = spKmh != null ? spKmh / s.max_speed_kmh : 0;
     h += row('Максимальна швидкість ТЗ', s.max_speed_kmh + ' км/год',
-        mv(spPct < 0.5 ? 'ok' : spPct < 0.8 ? 'warn' : 'danger',
+        mv(spPct <= 0.8 ? 'ok' : spPct <= 0.9 ? 'warn' : 'danger',
             spKmh != null ? spKmh + ' км/год' : '—'));
     
     const brakeT = m.brake_countdown != null ? m.brake_countdown : null;

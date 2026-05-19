@@ -21,6 +21,8 @@ PINCH_MIN  = 0.02
 PINCH_STOP = 0.05
 PINCH_MAX  = 0.20
 
+FACE_MISSING_COOLDOWN = 1.0
+
 # Регульована затримка після peace sign
 PEACE_COOLDOWN = 2.0
 # Буфер

@@ -251,7 +251,7 @@ class UIManager:
               fg=TEXT_COLOR).pack(anchor=tk.W)
 
         self.head_status_label = Label(head_section,
-                                       text="Напрямок: Прямо",
+                                       text="Напрямок: Не визначено",
                                        font=("Segoe UI", 10), bg=PANEL_BG,
                                        fg=TEXT_COLOR, wraplength=310,
                                        justify=tk.LEFT)
@@ -268,7 +268,7 @@ class UIManager:
               fg=TEXT_COLOR).pack(anchor=tk.W)
 
         self.gesture_label = Label(gesture_section,
-                                   text="Розведіть пальці для руху",
+                                   text="Жест руки: Не визначено",
                                    font=("Segoe UI", 10), bg=PANEL_BG,
                                    fg=TEXT_COLOR, wraplength=310,
                                    justify=tk.LEFT)
@@ -279,12 +279,12 @@ class UIManager:
         self.servo_label.config(text=f"Швидкість: {kmh} км/год")
         self.speed_progress['value'] = speed_percent
 
-        if speed_percent == 0:
-            self.servo_label.config(fg=DANGER_COLOR)
-        elif speed_percent < 50:
+        if speed_percent >= 0 and speed_percent <= 80:
+            self.servo_label.config(fg=SUCCESS_COLOR)
+        elif speed_percent > 80 and speed_percent <= 90:
             self.servo_label.config(fg=WARNING_COLOR)
         else:
-            self.servo_label.config(fg=SUCCESS_COLOR)
+            self.servo_label.config(fg=DANGER_COLOR)
 
     def update_signals(self, left, right, emergency, brake):
         self.left_turn_label.config(

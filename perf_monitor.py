@@ -2,17 +2,21 @@
 import time
 import statistics
 import logging
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
 class PerfMonitor:
-    def __init__(self, report_every=300, log_path="logs/perf_metrics.log", also_print=False):
+    def __init__(self, report_every=300, log_path="logs/perf_metrics.log", also_print=False, fps_window=30):
         self.report_every = report_every
         self.frame_idx = 0
         self.samples = defaultdict(list)
         self.event_timers = {}
         self.pending_cmd = {}
         self.also_print = also_print
+
+        self.fps_window = fps_window
+        self.fps_samples = deque(maxlen=fps_window)
+        self.last_frame_ts = None
 
         logger_name = f"perf_metrics_{id(self)}"
         self.logger = logging.getLogger(logger_name)
@@ -64,8 +68,26 @@ class PerfMonitor:
             self._log(f"{cmd_name} ACK latency: {ack_ms:.2f} ms")
             self.pending_cmd.pop(cmd_name, None)
 
+    def _update_fps(self):
+        now = time.perf_counter()
+        if self.last_frame_ts is not None:
+            dt = now - self.last_frame_ts
+            if dt > 0:
+                fps = 1.0 / dt
+                self.fps_samples.append(fps)
+        self.last_frame_ts = now
+
+    def get_fps(self):
+        if not self.fps_samples:
+            return 0.0
+        return sum(self.fps_samples) / len(self.fps_samples)
+
     def report(self):
         lines = [f"--- PERF REPORT @ frame {self.frame_idx} ---"]
+
+        current_fps = self.get_fps()
+        if current_fps > 0:
+            lines.append(f"{'fps':24s} avg={current_fps:7.2f}")
 
         for name, vals in self.samples.items():
             chunk = vals[-self.report_every:]
@@ -88,6 +110,7 @@ class PerfMonitor:
         self._log("\n".join(lines))
 
     def next_frame(self):
+        self._update_fps()
         self.frame_idx += 1
         if self.frame_idx % self.report_every == 0:
             self.report()
