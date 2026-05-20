@@ -472,7 +472,7 @@ class IntelligentDriverAssistanceSystem:
                             self.ui.status_label.config(text="АВАРІЙНА ЗУПИНКА! (обличчя відсутнє)", fg=DANGER_COLOR),
                             self.ui.gesture_label.config(text="Покажіть peace sign для вимкнення", fg=DANGER_COLOR)
                         ))
-                    else:
+                    elif self.settings.enable_face_missing:
                         _rem = max(0.0, self.settings.face_missing_time - elapsed)
                         _el  = elapsed
                         self.window.after(0, lambda el=_el, rem=_rem: self.ui.warning_label.config(
