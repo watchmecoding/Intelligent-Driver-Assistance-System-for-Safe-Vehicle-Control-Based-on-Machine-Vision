@@ -90,7 +90,6 @@ class SettingsManager:
 
     def apply_to_vehicle(self, vehicle):
         vehicle.max_allowed_yawns = self.max_allowed_yawns
-        if not self.enable_yawns and vehicle.yawn_speed_limit:
-            vehicle.yawn_speed_limit  = False
+        if not self.enable_yawns:
             vehicle.consecutive_yawns = 0
             vehicle.speed_buffer.clear()
