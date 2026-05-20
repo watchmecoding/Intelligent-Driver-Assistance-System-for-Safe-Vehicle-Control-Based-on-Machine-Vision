@@ -1,0 +1,3 @@
+logs/
+__pycache__/
+dlib_models/
