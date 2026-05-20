@@ -428,6 +428,11 @@ class IntelligentDriverAssistanceSystem:
                     self._head_down_logged     = False
                     self._last_eye_closed_time = 0.0
                     self._last_tilt_time       = 0.0
+                    self.vehicle.head_turn_left_start  = None
+                    self.vehicle.head_turn_right_start = None
+                    self.vehicle.head_straight_start   = None
+                    self.vehicle.left_turn_signal      = False
+                    self.vehicle.right_turn_signal     = False
                     self.perf.mark_event_start("face_missing")
 
                     if self.vehicle.emergency_stop_active:
