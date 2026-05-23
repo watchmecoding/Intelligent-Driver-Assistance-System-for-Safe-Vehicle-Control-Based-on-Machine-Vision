@@ -317,17 +317,18 @@ class IntelligentDriverAssistanceSystem:
                         bbox  = self.face_detector.draw_landmarks(frame_rgb, lm.landmark, w, h)
                         color = (0, 0, 255) if self.vehicle.emergency_stop_active else (0, 255, 0)
                         cv2.rectangle(frame_rgb, (bbox[0], bbox[1]), (bbox[2], bbox[3]), color, 2)
-                        text = f"EAR:{ear:.2f}  MAR:{mar:.2f}  YAW:{abs(yaw):.0f}  Pitch:{abs(pitch):.0f}"
+                        text = f"EAR:{ear:.2f}  MAR:{mar:.2f}  YAW:{abs(yaw):.0f}  PITCH:{abs(pitch):.0f}"
                         (tw, th), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
+
+                        x = (w - tw) // 2  # центр по горизонталі
 
                         # Темний прямокутник під текстом
                         overlay = frame_rgb.copy()
-                        cv2.rectangle(overlay, (220, 8), (tw + 235, th + 25), (0, 0, 0), -1)
+                        cv2.rectangle(overlay, (x - 8, 8), (x + tw + 8, th + 25), (0, 0, 0), -1)
                         cv2.addWeighted(overlay, 0.4, frame_rgb, 0.6, 0, frame_rgb)
 
                         # Текст поверх
-                        cv2.putText(frame_rgb, text,
-                                    (230, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+                        cv2.putText(frame_rgb, text, (x, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 
                     if not self.vehicle.emergency_stop_active and self.vehicle.eye_closed_start_time is None:
                         remaining_yawns = self.settings.max_allowed_yawns - self.vehicle.consecutive_yawns
