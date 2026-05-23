@@ -197,7 +197,7 @@ class IntelligentDriverAssistanceSystem:
                                 self._increment_emergency()
 
                         # Нахил голови
-                        tilt_state, tilt_elapsed, tilt_dir = self.vehicle.check_head_tilt(pitch, current_time)
+                        tilt_state, tilt_elapsed, tilt_dir = self.vehicle.check_head_tilt(-pitch, current_time)
                         if tilt_state in ("tilt_warning", "tilt_emergency"):
                             self.perf.mark_event_start("tilt")
                         else:
@@ -317,17 +317,17 @@ class IntelligentDriverAssistanceSystem:
                         bbox  = self.face_detector.draw_landmarks(frame_rgb, lm.landmark, w, h)
                         color = (0, 0, 255) if self.vehicle.emergency_stop_active else (0, 255, 0)
                         cv2.rectangle(frame_rgb, (bbox[0], bbox[1]), (bbox[2], bbox[3]), color, 2)
-                        text = f"EAR:{ear:.2f}  MAR:{mar:.2f}  YAW:{yaw:.0f}  Pitch:{pitch:.0f}"
+                        text = f"EAR:{ear:.2f}  MAR:{mar:.2f}  YAW:{abs(yaw):.0f}  Pitch:{abs(pitch):.0f}"
                         (tw, th), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
 
                         # Темний прямокутник під текстом
                         overlay = frame_rgb.copy()
-                        cv2.rectangle(overlay, (5, 8), (tw + 15, th + 25), (0, 0, 0), -1)
+                        cv2.rectangle(overlay, (220, 8), (tw + 235, th + 25), (0, 0, 0), -1)
                         cv2.addWeighted(overlay, 0.4, frame_rgb, 0.6, 0, frame_rgb)
 
                         # Текст поверх
                         cv2.putText(frame_rgb, text,
-                                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+                                    (230, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 
                     if not self.vehicle.emergency_stop_active and self.vehicle.eye_closed_start_time is None:
                         remaining_yawns = self.settings.max_allowed_yawns - self.vehicle.consecutive_yawns
@@ -727,8 +727,8 @@ class IntelligentDriverAssistanceSystem:
                     'mar_threshold':          self.settings.mar_threshold,
                     'stop_time':              self.settings.stop_time,
                     'emergency_brake_dur':    self.settings.emergency_brake_dur,
-                    'pitch_down_threshold':   self.settings.pitch_down_threshold,
                     'pitch_up_threshold':     self.settings.pitch_up_threshold,
+                    'pitch_down_threshold':   self.settings.pitch_down_threshold,
                     'tilt_time':              self.settings.tilt_time,
                     'head_turn_angle_left':   self.settings.head_turn_angle_left,
                     'head_turn_angle_right':  self.settings.head_turn_angle_right,
@@ -818,8 +818,8 @@ class IntelligentDriverAssistanceSystem:
                         'peace_cooldown':         self.settings.peace_cooldown,
                         'turn_signal_delay':      self.settings.head_turn_time,
                         'forward_gaze_cancel':    self.settings.head_turn_off_time,
-                        'pitch_down_threshold':   self.settings.pitch_down_threshold,
                         'pitch_up_threshold':     self.settings.pitch_up_threshold,
+                        'pitch_down_threshold':   self.settings.pitch_down_threshold,
                         'tilt_time':              self.settings.tilt_time,
                         'head_turn_angle_left':   self.settings.head_turn_angle_left,
                         'head_turn_angle_right':  self.settings.head_turn_angle_right,

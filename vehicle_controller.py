@@ -60,10 +60,9 @@ class VehicleController:
             self.head_turn_right_start = None
             self.head_straight_start   = None
             elapsed = current_time - self.head_turn_left_start
-            if elapsed >= on_time:
-                if not self.left_turn_signal:
-                    self.left_turn_signal  = True
-                    self.right_turn_signal = False
+            if elapsed >= on_time or self.left_turn_signal:
+                self.left_turn_signal  = True
+                self.right_turn_signal = False
                 return "left_on", elapsed
             return "left_waiting", elapsed
 
@@ -73,10 +72,9 @@ class VehicleController:
             self.head_turn_left_start  = None
             self.head_straight_start   = None
             elapsed = current_time - self.head_turn_right_start
-            if elapsed >= on_time:
-                if not self.right_turn_signal:
-                    self.right_turn_signal = True
-                    self.left_turn_signal  = False
+            if elapsed >= on_time or self.right_turn_signal:
+                self.right_turn_signal = True
+                self.left_turn_signal  = False
                 return "right_on", elapsed
             return "right_waiting", elapsed
 
@@ -130,18 +128,18 @@ class VehicleController:
         going_down = pitch < 0 and abs(pitch) >= s.pitch_down_threshold
         going_up   = pitch > 0 and abs(pitch) >= s.pitch_up_threshold
 
-        if going_down:
-            self.tilt_up_start_time = None
-            if self.tilt_down_start_time is None:
-                self.tilt_down_start_time = current_time
-            elapsed   = current_time - self.tilt_down_start_time
-            direction = "вгору"
-
-        elif going_up:
+        if going_up:
             self.tilt_down_start_time = None
             if self.tilt_up_start_time is None:
                 self.tilt_up_start_time = current_time
             elapsed   = current_time - self.tilt_up_start_time
+            direction = "вгору"
+
+        elif going_down:
+            self.tilt_up_start_time = None
+            if self.tilt_down_start_time is None:
+                self.tilt_down_start_time = current_time
+            elapsed   = current_time - self.tilt_down_start_time
             direction = "вниз"
 
         else:

@@ -27,8 +27,8 @@ class SettingsManager:
         self.peace_cooldown       = 2.0
         self.enable_drowsiness    = True
         # Нахил голови
-        self.pitch_down_threshold = 50.0
-        self.pitch_up_threshold   = 40.0
+        self.pitch_up_threshold   = 30.0
+        self.pitch_down_threshold = 40.0
         self.tilt_time            = 2.0
         self.enable_tilt          = True
         # Поворотники
@@ -48,7 +48,7 @@ class SettingsManager:
         float_fields = [
             'ear_threshold', 'mar_threshold',
             'stop_time', 'emergency_brake_dur', 'peace_cooldown',
-            'pitch_down_threshold', 'pitch_up_threshold', 'tilt_time',
+            'pitch_up_threshold', 'pitch_down_threshold', 'tilt_time',
             'head_turn_angle_left', 'head_turn_angle_right',
             'head_turn_time', 'head_turn_off_time','face_missing_time',
         ]

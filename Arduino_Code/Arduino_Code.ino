@@ -1,37 +1,29 @@
 // ArduinoCode.ino
 #include <Servo.h>
 
-
 Servo motor;
-
 
 const int SERVO_PIN = 9;
 const int BUZZER_PIN = 8;
 
-
-const int LED_LEFT      = 2;
-const int LED_RIGHT     = 3;
+const int LED_RIGHT     = 2;
+const int LED_LEFT      = 3;
 const int LED_EMERGENCY = 4;
 const int LED_BRAKE     = 5;
-
 
 const int SERVO_STOP = 92;
 const int SERVO_MIN_MOVE = 97;
 const int SERVO_MAX  = 179;   // не 180, щоб не впиратись в упор
 
-
 const int SERVO_STEP  = 2;
 const int SERVO_DELAY = 20;
-
 
 // Захист від перегріву: якщо серво на місці довше N мс — detach
 const unsigned long SERVO_IDLE_TIMEOUT = 3000;
 
-
 String currentCommand    = "STOP";
 int    currentServoSpeed = SERVO_STOP;
 int    targetServoSpeed  = SERVO_STOP;
-
 
 bool          alarmActive   = false;
 unsigned long lastBeepTime  = 0;
@@ -40,19 +32,15 @@ unsigned long lastServoTime = 0;
 unsigned long servoAtTargetSince = 0;
 bool          servoDetached = false;
 
-
 // Поточні стани виходів для уникнення зайвих дубльованих записів
 bool leftState      = false;
 bool rightState     = false;
 bool emergencyState = false;
 bool brakeState     = false;
 
-
 // Неблокуючий serial buffer
 static char serialBuffer[32];
 static uint8_t serialPos = 0;
-
-
 
 void setup() {
   Serial.begin(115200);
@@ -76,15 +64,11 @@ void setup() {
   Serial.println("Система готова");
 }
 
-
-
 void loop() {
   readSerialCommand();
   updateServo();
   updateAlarm();
 }
-
-
 
 void handleCommand(const String& cmd) {
   if (cmd.length() == 0) return;
@@ -167,8 +151,6 @@ void handleCommand(const String& cmd) {
   }
 }
 
-
-
 void readSerialCommand() {
   while (Serial.available() > 0) {
     char c = (char)Serial.read();
@@ -194,8 +176,6 @@ void readSerialCommand() {
     }
   }
 }
-
-
 
 void updateServo() {
   unsigned long now = millis();
@@ -232,8 +212,6 @@ void updateServo() {
     motor.write(currentServoSpeed);
 }
 
-
-
 void updateAlarm() {
   if (!alarmActive) return;
 
@@ -244,8 +222,6 @@ void updateAlarm() {
     beepState ? tone(BUZZER_PIN, 400) : noTone(BUZZER_PIN);
   }
 }
-
-
 
 // // Тест гучності пасивного динаміка
 // const int BUZZER_PIN = 8;

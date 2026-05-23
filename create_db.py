@@ -1,9 +1,9 @@
 # create_db.py
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from config import DBHOST, DBPORT, DBNAME, DBUSER, DBPASSWORD
+from config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 
-conn = psycopg2.connect(host=DBHOST, port=DBPORT, database="postgres", user=DBUSER, password=DBPASSWORD)
+conn = psycopg2.connect(host=DB_HOST, port=DB_PORT, database="postgres", user=DB_USER, password=DB_PASSWORD)
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cur = conn.cursor()
 try:
@@ -14,7 +14,7 @@ except Exception as e:
 cur.close()
 conn.close()
 
-conn = psycopg2.connect(host=DBHOST, port=DBPORT, database=DBNAME, user=DBUSER, password=DBPASSWORD)
+conn = psycopg2.connect(host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
 cur = conn.cursor()
 
 # Водії
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS settings_drowsiness (
     ear_threshold       FLOAT   NOT NULL DEFAULT 0.25,
     mar_threshold       FLOAT   NOT NULL DEFAULT 0.6,
     stop_time           FLOAT   NOT NULL DEFAULT 4.0,
-    emergency_brake_dur FLOAT   NOT NULL DEFAULT 5.0,
+    emergency_brake_dur FLOAT   NOT NULL DEFAULT 10.0,
     peace_cooldown      FLOAT   NOT NULL DEFAULT 2.0,
     enable_drowsiness   BOOLEAN NOT NULL DEFAULT TRUE,
     description         TEXT    DEFAULT 'EAR/MAR поріг, затримка до аварійки, гальмування, cooldown.',
@@ -98,9 +98,9 @@ CREATE TABLE IF NOT EXISTS settings_drowsiness (
 cur.execute("""
 CREATE TABLE IF NOT EXISTS settings_head_tilt (
     profile_id           INTEGER PRIMARY KEY REFERENCES settings_profiles(id),
-    pitch_down_threshold FLOAT   NOT NULL DEFAULT 50.0,
     pitch_up_threshold   FLOAT   NOT NULL DEFAULT 40.0,
-    tilt_time            FLOAT   NOT NULL DEFAULT 2.0,
+    pitch_down_threshold FLOAT   NOT NULL DEFAULT 40.0,
+    tilt_time            FLOAT   NOT NULL DEFAULT 4.0,
     enable_tilt          BOOLEAN NOT NULL DEFAULT TRUE,
     description          TEXT    DEFAULT 'Нахил вниз/вгору: кути та затримка до аварійки.',
     updated_at           TIMESTAMP DEFAULT NOW()
@@ -111,8 +111,8 @@ CREATE TABLE IF NOT EXISTS settings_head_tilt (
 cur.execute("""
 CREATE TABLE IF NOT EXISTS settings_turn_signals (
     profile_id            INTEGER PRIMARY KEY REFERENCES settings_profiles(id),
-    head_turn_angle_left  FLOAT   NOT NULL DEFAULT 15.0,
-    head_turn_angle_right FLOAT   NOT NULL DEFAULT 15.0,
+    head_turn_angle_left  FLOAT   NOT NULL DEFAULT 40.0,
+    head_turn_angle_right FLOAT   NOT NULL DEFAULT 40.0,
     head_turn_time        FLOAT   NOT NULL DEFAULT 2.0,
     head_turn_off_time    FLOAT   NOT NULL DEFAULT 2.0,
     enable_turn_signals   BOOLEAN NOT NULL DEFAULT TRUE,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS settings_yawns (
 cur.execute("""
 CREATE TABLE IF NOT EXISTS settings_face_missing (
     profile_id          INTEGER PRIMARY KEY REFERENCES settings_profiles(id),
-    face_missing_time   FLOAT   NOT NULL DEFAULT 3.0,
+    face_missing_time   FLOAT   NOT NULL DEFAULT 4.0,
     enable_face_missing BOOLEAN NOT NULL DEFAULT TRUE,
     description         TEXT    DEFAULT 'Час відсутності обличчя до аварійки.',
     updated_at          TIMESTAMP DEFAULT NOW()
@@ -188,7 +188,7 @@ for view_name, profile_id in [("v_settings", 2), ("v_default_settings", 1)]:
     SELECT g.max_speed_kmh,
            d.ear_threshold, d.mar_threshold, d.stop_time, d.emergency_brake_dur,
            d.peace_cooldown, d.enable_drowsiness,
-           t.pitch_down_threshold, t.pitch_up_threshold,
+           t.pitch_up_threshold, t.pitch_down_threshold,
            t.tilt_time, t.enable_tilt,
            s.head_turn_angle_left, s.head_turn_angle_right,
            s.head_turn_time, s.head_turn_off_time, s.enable_turn_signals,

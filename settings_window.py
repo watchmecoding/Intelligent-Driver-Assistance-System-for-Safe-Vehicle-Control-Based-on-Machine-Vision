@@ -103,12 +103,12 @@ class SettingsWindow:
         self._section("Контроль нахилу голови")
         self._toggle("enable_tilt",
                      "Увімкнути контроль нахилу голови", s.enable_tilt)
-        self._slider("pitch_down_threshold",
-                     "Пороговий кут нахилу вгору для аварійної зупинки (градуси)",
-                     0, 100, s.pitch_down_threshold)
         self._slider("pitch_up_threshold",
-                     "Пороговий кут нахилу вниз для аварійної зупинки (градуси)",
+                     "Пороговий кут нахилу вгору для аварійної зупинки (градуси)",
                      0, 100, s.pitch_up_threshold)
+        self._slider("pitch_down_threshold",
+                     "Пороговий кут нахилу вниз для аварійної зупинки (градуси)",
+                     0, 100, s.pitch_down_threshold)
         self._slider("tilt_time",
                      "Час нахилу голови до аварійної зупинки (сек)",
                      0.5, 10.0, s.tilt_time, resolution=0.5)
@@ -205,8 +205,8 @@ class SettingsWindow:
             'stop_time':             s.stop_time,
             'emergency_brake_dur':   s.emergency_brake_dur,
             'peace_cooldown':        s.peace_cooldown,
-            'pitch_down_threshold':  s.pitch_down_threshold,
             'pitch_up_threshold':    s.pitch_up_threshold,
+            'pitch_down_threshold':  s.pitch_down_threshold,
             'tilt_time':             s.tilt_time,
             'head_turn_angle_left':  s.head_turn_angle_left,
             'head_turn_angle_right': s.head_turn_angle_right,

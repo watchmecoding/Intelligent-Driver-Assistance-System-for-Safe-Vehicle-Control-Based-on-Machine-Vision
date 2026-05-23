@@ -138,16 +138,16 @@ class DatabaseLogger:
 
                 cur.execute("""
                     INSERT INTO settings_head_tilt
-                        (profile_id, pitch_down_threshold, pitch_up_threshold,
+                        (profile_id, pitch_up_threshold, pitch_down_threshold,
                          tilt_time, enable_tilt, updated_at)
                     VALUES (2, %s, %s, %s, %s, NOW())
                     ON CONFLICT (profile_id) DO UPDATE SET
-                        pitch_down_threshold = EXCLUDED.pitch_down_threshold,
                         pitch_up_threshold   = EXCLUDED.pitch_up_threshold,
+                        pitch_down_threshold = EXCLUDED.pitch_down_threshold,
                         tilt_time            = EXCLUDED.tilt_time,
                         enable_tilt          = EXCLUDED.enable_tilt,
                         updated_at           = NOW()
-                """, (s.pitch_down_threshold, s.pitch_up_threshold,
+                """, (s.pitch_up_threshold, s.pitch_down_threshold,
                       s.tilt_time, s.enable_tilt))
 
                 cur.execute("""
@@ -213,8 +213,8 @@ class DatabaseLogger:
                      "peace_cooldown=d.peace_cooldown, "
                      "enable_drowsiness=d.enable_drowsiness"),
                     ("settings_head_tilt",
+                    "pitch_up_threshold=d.pitch_up_threshold, "
                      "pitch_down_threshold=d.pitch_down_threshold, "
-                     "pitch_up_threshold=d.pitch_up_threshold, "
                      "tilt_time=d.tilt_time, enable_tilt=d.enable_tilt"),
                     ("settings_turn_signals",
                      "head_turn_angle_left=d.head_turn_angle_left, "
