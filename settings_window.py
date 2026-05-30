@@ -184,6 +184,8 @@ class SettingsWindow:
                            bg=BG_COLOR, fg=SUCCESS_COLOR, width=6)
         val_lbl.pack(side=tk.RIGHT)
 
+        self._vars[key] = (var, is_int, val_lbl)
+
         tk.Scale(row, variable=var,
                  from_=from_, to=to, resolution=resolution,
                  orient=tk.HORIZONTAL, length=420, showvalue=False,
@@ -226,7 +228,9 @@ class SettingsWindow:
         for key, val in mapping.items():
             item = self._vars.get(key)
             if item:
-                item[0].set(val)
+                var, is_int, lbl = item
+                var.set(val)
+                lbl.config(text=self._fmt(val, is_int))
         for key, val in toggles.items():
             var = self._vars.get(key)
             if isinstance(var, tk.BooleanVar):
@@ -249,7 +253,7 @@ class SettingsWindow:
             if isinstance(item, tk.BooleanVar):
                 setattr(s, key, item.get())
             else:
-                var, is_int = item
+                var, is_int, _ = item 
                 val = var.get()
                 setattr(s, key, int(val) if is_int else float(val))
         s.save_to_db(self.db)
