@@ -4,9 +4,6 @@ import numpy as np
 import mediapipe as mp
 from settings_manager import SettingsManager
 
-LEFT_EYE_IDX  = [33,  160, 158, 133, 153, 144]
-RIGHT_EYE_IDX = [362, 385, 387, 263, 373, 380]
-
 _MODEL_3D = np.array([
     [   0.0,    0.0,    0.0],
     [   0.0, -330.0,  -65.0],
@@ -29,7 +26,9 @@ class FaceDetector:
             min_detection_confidence=0.7,
             min_tracking_confidence=0.6,
         )
-        self.mouth_indices = [61, 291, 13, 14]
+        self.left_eye_idx  = [33,  160, 158, 133, 153, 144]
+        self.right_eye_idx = [362, 385, 387, 263, 373, 380]
+        self.mouth_idx = [61, 291, 13, 14]
         self._prev_pitch = 0.0
         self._prev_yaw   = 0.0
 
@@ -91,8 +90,8 @@ class FaceDetector:
     def get_metrics(self, landmarks, w, h):
         s = self.settings
 
-        left_ear  = self.calculate_EAR(landmarks, LEFT_EYE_IDX,  w, h)
-        right_ear = self.calculate_EAR(landmarks, RIGHT_EYE_IDX, w, h)
+        left_ear  = self.calculate_EAR(landmarks, self.left_eye_idx,  w, h)
+        right_ear = self.calculate_EAR(landmarks, self.right_eye_idx, w, h)
         pitch, yaw = self.estimateheadpose(landmarks, w, h)
 
         # Вибір найближчого ока при повороті
@@ -106,7 +105,7 @@ class FaceDetector:
         else:
             ear = (left_ear + right_ear) / 2.0
 
-        mar = self.calculate_MAR(landmarks, self.mouth_indices, w, h)
+        mar = self.calculate_MAR(landmarks, self.mouth_idx, w, h)
 
         return {
             'EAR':       ear,
@@ -118,7 +117,7 @@ class FaceDetector:
         }
 
     def draw_landmarks(self, frame_rgb, landmarks, w, h):
-        for idx in LEFT_EYE_IDX + RIGHT_EYE_IDX + self.mouth_indices:
+        for idx in self.left_eye_idx + self.right_eye_idx + self.mouth_idx:
             x = int(landmarks[idx].x * w)
             y = int(landmarks[idx].y * h)
             cv2.circle(frame_rgb, (x, y), 2, (0, 255, 0), -1)
